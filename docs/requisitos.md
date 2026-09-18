@@ -158,3 +158,136 @@ O sistema não deve classificar automaticamente como falso um conteúdo
 para o qual não existam evidências suficientes.
 
 Prioridade: MVP
+
+## RF14 - Identificação do método de análise
+O sistema deve informar qual mecanismo foi utilizado para produzir
+o resultado.
+
+Exemplos:
+
+- domínio presente na whitelist;
+- classificação por Machine Learning;
+- análise complementar por IA.
+
+Prioridade: MVP
+
+
+## RF15 - Exibição do nível de confiança
+Quando a análise utilizar um modelo que produza uma medida de confiança,
+o sistema deve apresentar essa informação ao usuário de forma clara.
+
+Exemplo:
+
+"Modelo de Machine Learning: confiança de 82%."
+
+Prioridade: MVP
+
+
+## RF16 - Solicitação manual de nova análise
+O usuário deve poder solicitar novamente a análise do conteúdo atual
+sem precisar recarregar toda a página.
+
+Prioridade: V2
+
+
+## RF17 - Feedback do usuário
+O sistema deve permitir que o usuário informe se considera o resultado
+da análise útil, incorreto ou inconclusivo.
+
+Esse feedback poderá ser armazenado para avaliação futura do desempenho
+do sistema.
+
+Prioridade: V2
+
+
+## RF18 - Histórico local de análises
+A extensão poderá manter um histórico local das últimas análises
+realizadas pelo usuário.
+
+O histórico poderá apresentar:
+
+- título;
+- domínio;
+- data da análise;
+- classificação;
+- nível de confiança.
+
+Prioridade: V2
+
+
+## RF19 - Explicação dos indicadores encontrados
+O sistema deve informar quais características do conteúdo contribuíram
+para a análise apresentada.
+
+Exemplos:
+
+- ausência de fontes identificáveis;
+- linguagem altamente emocional;
+- alegações extraordinárias sem evidência;
+- domínio desconhecido;
+- classificação do modelo de ML.
+
+Prioridade: V2
+
+
+## RF20 - Comparação com fontes confiáveis
+Quando possível, o sistema deve apresentar conteúdos de fontes da
+whitelist que tratem do mesmo assunto analisado.
+
+O usuário deve conseguir acessar essas referências diretamente pela
+extensão.
+
+Prioridade: V2
+
+
+## RF21 - Configuração da análise automática
+A extensão deve permitir que o usuário escolha entre:
+
+- análise automática ao abrir uma página;
+- análise somente mediante solicitação;
+- análise somente de conteúdo selecionado.
+
+Prioridade: V2
+
+
+## RF22 - Tratamento de falhas da API
+Quando a API estiver indisponível ou ocorrer um erro durante a análise,
+a extensão deve informar o usuário de maneira clara.
+
+O sistema não deve apresentar uma falha de comunicação como resultado
+de análise.
+
+Prioridade: MVP
+
+
+## RF23 - Tratamento de conteúdo insuficiente
+Quando o texto selecionado ou extraído for insuficiente para uma
+análise adequada, o sistema deve informar o usuário e solicitar uma
+seleção maior ou outra forma de análise.
+
+Prioridade: MVP
+
+
+## RF24 - Identificação de fonte citada
+Quando possível, o sistema deve identificar links, referências ou fontes
+citadas dentro do conteúdo analisado.
+
+Essas informações poderão ser utilizadas como apoio à avaliação da
+confiabilidade do texto.
+
+Prioridade: V2
+
+
+## RF25 - Consulta manual de URL
+O sistema poderá permitir que o usuário informe manualmente uma URL
+para solicitar sua análise, mesmo sem estar navegando diretamente
+na página.
+
+Prioridade: Futuro
+
+
+## RF26 - Visualização dos critérios da análise
+A extensão deve permitir que o usuário consulte uma explicação resumida
+sobre os critérios utilizados pelo sistema para produzir sua classificação.
+
+Prioridade: MVP
