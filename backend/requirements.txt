@@ -12,8 +12,10 @@ fastapi==0.141.1
 filelock==4.0.1
 h11==0.16.0
 httpcore==1.0.9
+httpcore2==2.13.0
 httptools==0.8.0
 httpx==0.28.1
+httpx2==2.13.0
 idna==3.20
 iniconfig==2.3.0
 license-expression==30.4.4
@@ -43,6 +45,7 @@ sortedcontainers==2.4.0
 starlette==1.6.0
 tomli==2.4.1
 tomli_w==1.2.0
+truststore==0.10.4
 typing-inspection==0.4.4
 typing_extensions==4.16.0
 urllib3==2.8.0
