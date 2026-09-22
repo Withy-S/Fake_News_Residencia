@@ -7,7 +7,7 @@ from app.schemas.analyze import (
     Method,
 )
 from app.services.classifiers import AnalysisUnavailableError, Classifier
-from app.services.whitelist import is_trusted_domain
+from app.services.trustlist import is_trusted_domain
 
 
 class AnalysisPipeline:
@@ -47,7 +47,9 @@ class AnalysisPipeline:
                 status="ok",
                 classification=Classification.TRUSTED,
                 method=Method.WHITELIST,
-                justifications=["O domínio da página está na lista de fontes confiáveis."],
+                justifications=[
+                    "O domínio da página está na lista de fontes confiáveis."
+                ],
             )
 
         ml = self.classifier.classify(text)
@@ -69,8 +71,10 @@ class AnalysisPipeline:
                 confidence=ml.confidence,
                 method=Method.ML_MODEL,
                 justifications=[
-                    "A confiança do modelo ficou abaixo do mínimo "
-                    "e a análise complementar estava indisponível."
+                    (
+                        "A confiança do modelo ficou abaixo do mínimo "
+                        "e a análise complementar estava indisponível."
+                    )
                 ],
             )
 
