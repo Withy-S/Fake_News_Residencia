@@ -14,7 +14,9 @@ class FakeClassifier:
     """Classificador de mentira: devolve o resultado combinado e conta as chamadas."""
 
     def __init__(self, classification, confidence):
-        self.result = ClassifierResult(classification, confidence, ["justificativa de teste"])
+        self.result = ClassifierResult(
+            classification, confidence, ["justificativa de teste"]
+        )
         self.calls = 0
 
     def classify(self, text):
