@@ -230,17 +230,7 @@ Exemplos:
 Prioridade: V2
 
 
-## RF20 - Comparação com fontes confiáveis
-Quando possível, o sistema deve apresentar conteúdos de fontes da
-whitelist que tratem do mesmo assunto analisado.
-
-O usuário deve conseguir acessar essas referências diretamente pela
-extensão.
-
-Prioridade: V2
-
-
-## RF21 - Configuração da análise automática
+## RF20 - Configuração da análise automática
 A extensão deve permitir que o usuário escolha entre:
 
 - análise automática ao abrir uma página;
@@ -250,7 +240,7 @@ A extensão deve permitir que o usuário escolha entre:
 Prioridade: V2
 
 
-## RF22 - Tratamento de falhas da API
+## RF21 - Tratamento de falhas da API
 Quando a API estiver indisponível ou ocorrer um erro durante a análise,
 a extensão deve informar o usuário de maneira clara.
 
@@ -260,7 +250,7 @@ de análise.
 Prioridade: MVP
 
 
-## RF23 - Tratamento de conteúdo insuficiente
+## RF22 - Tratamento de conteúdo insuficiente
 Quando o texto selecionado ou extraído for insuficiente para uma
 análise adequada, o sistema deve informar o usuário e solicitar uma
 seleção maior ou outra forma de análise.
@@ -268,7 +258,7 @@ seleção maior ou outra forma de análise.
 Prioridade: MVP
 
 
-## RF24 - Identificação de fonte citada
+## RF23 - Identificação de fonte citada
 Quando possível, o sistema deve identificar links, referências ou fontes
 citadas dentro do conteúdo analisado.
 
@@ -278,7 +268,7 @@ confiabilidade do texto.
 Prioridade: V2
 
 
-## RF25 - Consulta manual de URL
+## RF24 - Consulta manual de URL
 O sistema poderá permitir que o usuário informe manualmente uma URL
 para solicitar sua análise, mesmo sem estar navegando diretamente
 na página.
@@ -286,7 +276,7 @@ na página.
 Prioridade: Futuro
 
 
-## RF26 - Visualização dos critérios da análise
+## RF25 - Visualização dos critérios da análise
 A extensão deve permitir que o usuário consulte uma explicação resumida
 sobre os critérios utilizados pelo sistema para produzir sua classificação.
 
