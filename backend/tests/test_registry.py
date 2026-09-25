@@ -4,14 +4,17 @@ import app.services.catalog  # noqa: F401
 from app.core.config import Settings
 from app.services.classifiers import AnalysisUnavailableError, PlaceholderClassifier
 from app.services.registry import UnavailableClassifier, available, build, register
+from app.services.resilience import ResilientClassifier
 
 
 def test_nomes_do_catalogo_estao_registrados():
     assert {"placeholder", "ai_fallback"} <= set(available())
 
 
-def test_build_cria_pelo_nome():
-    assert isinstance(build("placeholder", Settings()), PlaceholderClassifier)
+def test_build_cria_pelo_nome_e_protege_com_timeout():
+    clf = build("placeholder", Settings())
+    assert isinstance(clf, ResilientClassifier)
+    assert isinstance(clf.inner, PlaceholderClassifier)
 
 
 def test_nome_desconhecido_falha_na_hora():
