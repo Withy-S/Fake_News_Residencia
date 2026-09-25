@@ -52,24 +52,40 @@ class AnalysisPipeline:
                 ],
             )
 
-        ml = self.classifier.classify(text)
-        if ml.confidence >= self.min_confidence:
+        try:
+            ml = self.classifier.classify(text)
+        except AnalysisUnavailableError:
+            ml = None  # RNF09: segue para o fallback em vez de quebrar
+
+        if ml is not None and ml.confidence >= self.min_confidence:
             return AnalyzeResponse(
                 status="ok",
                 classification=ml.classification,
                 confidence=ml.confidence,
-                method=Method.ML_MODEL,
+                method=ml.method,
                 justifications=ml.justifications,
             )
 
         try:
             ai = self.fallback.classify(text)
         except AnalysisUnavailableError:
+            if ml is None:
+                # Nenhum mecanismo analisou o texto: é falha, não resultado (RF21).
+                return AnalyzeResponse(
+                    status="error",
+                    error=ErrorInfo(
+                        code=ErrorCode.ANALYSIS_UNAVAILABLE,
+                        message=(
+                            "A análise está indisponível no momento. "
+                            "Tente novamente em instantes."
+                        ),
+                    ),
+                )
             return AnalyzeResponse(
                 status="ok",
                 classification=Classification.UNVERIFIED,
                 confidence=ml.confidence,
-                method=Method.ML_MODEL,
+                method=ml.method,
                 justifications=[
                     (
                         "A confiança do modelo ficou abaixo do mínimo "
