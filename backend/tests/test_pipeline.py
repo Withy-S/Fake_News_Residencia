@@ -104,3 +104,22 @@ def test_com_os_componentes_provisorios_o_resultado_e_nao_verificado():
     pipeline = make_pipeline(PlaceholderClassifier(), UnavailableFallback())
     resp = pipeline.analyze(make_request())
     assert resp.classification == Classification.UNVERIFIED
+
+
+class BrokenClassifier:
+    def classify(self, text):
+        raise AnalysisUnavailableError("modelo fora do ar")
+
+
+def test_classificador_fora_do_ar_aciona_o_fallback():
+    fallback = FakeClassifier(Classification.SUSPICIOUS, 0.8)
+    resp = make_pipeline(BrokenClassifier(), fallback).analyze(make_request())
+    assert resp.method == Method.AI_FALLBACK
+    assert fallback.calls == 1
+
+
+def test_tudo_fora_do_ar_devolve_erro_e_nao_resultado():
+    resp = make_pipeline(BrokenClassifier(), BrokenFallback()).analyze(make_request())
+    assert resp.status == "error"
+    assert resp.error.code == ErrorCode.ANALYSIS_UNAVAILABLE
+    assert resp.classification is None

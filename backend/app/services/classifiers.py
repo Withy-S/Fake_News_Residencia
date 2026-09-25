@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Protocol
 
-from app.schemas.analyze import Classification
+from app.schemas.analyze import Classification, Method
 
 
 class AnalysisUnavailableError(Exception):
@@ -13,6 +13,7 @@ class ClassifierResult:
     classification: Classification
     confidence: float
     justifications: list[str] = field(default_factory=list)
+    method: Method = Method.ML_MODEL  # RF14: quem produziu o resultado
 
 
 class Classifier(Protocol):
