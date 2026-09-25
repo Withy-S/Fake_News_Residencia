@@ -4,6 +4,7 @@ from app.schemas.analyze import (
     Classification,
     ErrorCode,
     ErrorInfo,
+    Indicator,
     Method,
 )
 from app.services.classifiers import AnalysisUnavailableError, Classifier
@@ -42,20 +43,23 @@ class AnalysisPipeline:
             )
 
         url = str(request.url) if request.url else None
+        indicators = []
         if is_trusted_domain(url, self.trusted_domains):
-            return AnalyzeResponse(
-                status="ok",
-                classification=Classification.TRUSTED,
-                method=Method.WHITELIST,
-                justifications=[
-                    "O domínio da página está na lista de fontes confiáveis."
-                ],
+            indicators.append(
+                Indicator(
+                    code="trusted_domain",
+                    description=(
+                        "O domínio está na lista de fontes confiáveis. "
+                        "Isso não determina a veracidade do conteúdo porém indica uma fonte mais credível."
+                    ),
+                )
             )
 
         ml = self.classifier.classify(text)
         if ml.confidence >= self.min_confidence:
             return AnalyzeResponse(
                 status="ok",
+                indicators=indicators,
                 classification=ml.classification,
                 confidence=ml.confidence,
                 method=Method.ML_MODEL,
@@ -67,6 +71,7 @@ class AnalysisPipeline:
         except AnalysisUnavailableError:
             return AnalyzeResponse(
                 status="ok",
+                indicators=indicators,
                 classification=Classification.UNVERIFIED,
                 confidence=ml.confidence,
                 method=Method.ML_MODEL,
@@ -80,6 +85,7 @@ class AnalysisPipeline:
 
         return AnalyzeResponse(
             status="ok",
+            indicators=indicators,
             classification=ai.classification,
             confidence=ai.confidence,
             method=Method.AI_FALLBACK,
