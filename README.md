@@ -121,7 +121,11 @@ Os requisitos funcionais e não funcionais estão em [`docs/requisitos.md`](docs
 
 ## Equipe
 
-Esqueci o nome de todo mundo e é meio feio botar só o meu , arrumo isso amanhã
+Davi 
+Mayara
+Miti
+Rafaella
+Rayssa
 
 ## Licença
 
