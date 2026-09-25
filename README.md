@@ -33,8 +33,8 @@ Escopo do MVP, conforme os [requisitos](docs/requisitos.md):
 flowchart TD
     A[Extensão envia texto e URL] --> B{Texto suficiente?}
     B -- não --> E1[Erro: pedir seleção maior]
-    B -- sim --> C{Domínio na whitelist?}
-    C -- sim --> R1[Resultado por whitelist]
+    B -- sim --> C{Domínio na trustlist?}
+    C -- sim --> R1[Resultado por  trustlist]
     C -- não --> D[Classificador de ML]
     D --> F{Confiança acima do mínimo?}
     F -- sim --> R2[Resultado por ML]
