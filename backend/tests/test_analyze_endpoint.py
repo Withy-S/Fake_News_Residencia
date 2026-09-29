@@ -79,5 +79,6 @@ def test_analyze_usa_whitelist():
         },
     )
     body = response.json()
-    assert body["method"] == "whitelist"
-    assert body["classification"] == "confiavel"
+    assert body["method"] == "ml_model"
+    assert body["classification"] == "suspeito"
+    assert body["indicators"][0]["code"] == "trusted_domain"

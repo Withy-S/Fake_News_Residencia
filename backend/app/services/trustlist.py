@@ -18,7 +18,7 @@ def is_trusted_domain(url: str | None, trusted_domains: list[str]) -> bool:
     if host is None:
         return False
     for domain in trusted_domains:
-        d = domain.lower().strip().lstrip(".")
+        d = domain.lower().strip().strip(".").removeprefix("www.")
         if d and (host == d or host.endswith("." + d)):
             return True
     return False

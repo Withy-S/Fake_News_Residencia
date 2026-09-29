@@ -51,13 +51,14 @@ def test_texto_curto_devolve_erro_sem_chamar_ninguem():
     assert ml.calls == 0
 
 
-def test_dominio_da_whitelist_classifica_sem_usar_o_modelo():
+def test_dominio_da_whitelist_e_indicador_sem_substituir_o_modelo():
     ml = FakeClassifier(Classification.SUSPICIOUS, 0.9)
     pipeline = make_pipeline(ml, UnavailableFallback(), trusted=["gov.br"])
     resp = pipeline.analyze(make_request(url="https://saude.gov.br/noticia"))
-    assert resp.classification == Classification.TRUSTED
-    assert resp.method == Method.WHITELIST
-    assert ml.calls == 0
+    assert resp.classification == Classification.SUSPICIOUS
+    assert resp.method == Method.ML_MODEL
+    assert ml.calls == 1
+    assert resp.indicators[0].code == "trusted_domain"
 
 
 def test_campo_domain_forjado_nao_ativa_a_whitelist():
@@ -106,20 +107,30 @@ def test_com_os_componentes_provisorios_o_resultado_e_nao_verificado():
     assert resp.classification == Classification.UNVERIFIED
 
 
-class BrokenClassifier:
-    def classify(self, text):
-        raise AnalysisUnavailableError("modelo fora do ar")
-
-
-def test_classificador_fora_do_ar_aciona_o_fallback():
-    fallback = FakeClassifier(Classification.SUSPICIOUS, 0.8)
-    resp = make_pipeline(BrokenClassifier(), fallback).analyze(make_request())
+def test_indicador_preservado_no_fallback():
+    ml = FakeClassifier(Classification.SUSPICIOUS, 0.3)
+    fallback = FakeClassifier(Classification.UNVERIFIED, 0.5)
+    resp = make_pipeline(ml, fallback, ["who.int"]).analyze(
+        make_request(url="https://www.who.int/noticia")
+    )
     assert resp.method == Method.AI_FALLBACK
+    assert resp.classification == Classification.UNVERIFIED
+    assert resp.indicators[0].code == "trusted_domain"
     assert fallback.calls == 1
 
 
-def test_tudo_fora_do_ar_devolve_erro_e_nao_resultado():
-    resp = make_pipeline(BrokenClassifier(), BrokenFallback()).analyze(make_request())
-    assert resp.status == "error"
-    assert resp.error.code == ErrorCode.ANALYSIS_UNAVAILABLE
-    assert resp.classification is None
+def test_whitelist_nao_classifica_com_modelos_indisponiveis():
+    resp = make_pipeline(
+        PlaceholderClassifier(), UnavailableFallback(), ["who.int"]
+    ).analyze(make_request(url="https://who.int/noticia"))
+    assert resp.classification == Classification.UNVERIFIED
+    assert resp.indicators[0].code == "trusted_domain"
+
+
+def test_dominio_desconhecido_nao_gera_indicador_de_confianca():
+    ml = FakeClassifier(Classification.UNVERIFIED, 0.8)
+    resp = make_pipeline(ml, UnavailableFallback(), ["who.int"]).analyze(
+        make_request(url="https://example.org/noticia")
+    )
+    assert resp.indicators == []
+    assert resp.classification == Classification.UNVERIFIED
