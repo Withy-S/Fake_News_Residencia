@@ -57,7 +57,7 @@ def test_url_malformada():
     assert not is_trusted_domain("https://[invalido", TRUSTED)
 
 
-def test_carrega_whitelist_do_ambiente(monkeypatch):
+def test_carrega_trustlist_do_ambiente(monkeypatch):
     from app.core.config import Settings
 
     monkeypatch.setenv("FN_TRUSTED_DOMAINS", '["who.int", "gov.br"]')
@@ -66,7 +66,7 @@ def test_carrega_whitelist_do_ambiente(monkeypatch):
     assert is_trusted_domain("https://www.who.int/x", settings.trusted_domains)
 
 
-def test_carrega_whitelist_do_arquivo_env(tmp_path, monkeypatch):
+def test_carrega_trustlist_do_arquivo_env(tmp_path, monkeypatch):
     from app.core.config import Settings
 
     monkeypatch.delenv("FN_TRUSTED_DOMAINS", raising=False)
