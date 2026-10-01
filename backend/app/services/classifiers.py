@@ -1,23 +1,15 @@
-from dataclasses import dataclass, field
-from typing import Protocol
+from app.domain.enums import Classification
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.models import ClassifierResult
+from app.domain.ports import Classifier
 
-from app.schemas.analyze import Classification, Method
-
-
-class AnalysisUnavailableError(Exception):
-    """Um mecanismo de análise está fora do ar (RF22, RNF09)."""
-
-
-@dataclass(frozen=True)
-class ClassifierResult:
-    classification: Classification
-    confidence: float
-    justifications: list[str] = field(default_factory=list)
-    method: Method = Method.ML_MODEL  # RF14: quem produziu o resultado
-
-
-class Classifier(Protocol):
-    def classify(self, text: str) -> ClassifierResult: ...
+__all__ = [
+    "AnalysisUnavailableError",
+    "Classifier",
+    "ClassifierResult",
+    "PlaceholderClassifier",
+    "UnavailableFallback",
+]
 
 
 class PlaceholderClassifier:
