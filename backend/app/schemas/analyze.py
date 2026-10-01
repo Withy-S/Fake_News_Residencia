@@ -3,23 +3,12 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, HttpUrl
 
+from app.domain.enums import Classification, Method
+
 
 class AnalysisType(StrEnum):
     SELECTION = "selecao"  # RF02
     FULL_PAGE = "pagina_completa"  # RF03
-
-
-class Classification(StrEnum):
-    TRUSTED = "confiavel"
-    SUSPICIOUS = "suspeito"
-    UNVERIFIED = "nao_verificado"
-
-
-class Method(StrEnum):
-    WHITELIST = "whitelist"
-    ML_MODEL = "ml_model"
-    AI_FALLBACK = "ai_fallback"
-    LINGUISTIC = "analise_linguistica"  # RF07
 
 
 class ErrorCode(StrEnum):
