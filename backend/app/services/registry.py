@@ -2,7 +2,8 @@ import logging
 from collections.abc import Callable
 
 from app.core.config import Settings
-from app.services.classifiers import AnalysisUnavailableError, Classifier
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.ports import Classifier
 from app.services.resilience import ResilientClassifier
 
 logger = logging.getLogger("fake_news_api")

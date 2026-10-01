@@ -1,13 +1,13 @@
+from app.domain.enums import Classification, Method
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.ports import Classifier
 from app.schemas.analyze import (
     AnalyzeRequest,
     AnalyzeResponse,
-    Classification,
     ErrorCode,
     ErrorInfo,
     Indicator,
-    Method,
 )
-from app.services.classifiers import AnalysisUnavailableError, Classifier
 from app.services.trustlist import is_trusted_domain
 
 

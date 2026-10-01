@@ -2,11 +2,9 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 
-from app.services.classifiers import (
-    AnalysisUnavailableError,
-    Classifier,
-    ClassifierResult,
-)
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.models import ClassifierResult
+from app.domain.ports import Classifier
 
 logger = logging.getLogger("fake_news_api")
 
