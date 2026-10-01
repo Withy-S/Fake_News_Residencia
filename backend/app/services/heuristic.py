@@ -1,7 +1,7 @@
 import re
 
-from app.schemas.analyze import Classification, Method
-from app.services.classifiers import ClassifierResult
+from app.domain.enums import Classification, Method
+from app.domain.models import ClassifierResult
 
 # Pontos de partida para o RF07. Os pesos e o limiar precisam ser calibrados
 # com dados rotulados (ex.: Fake.Br) antes de irem para produção.

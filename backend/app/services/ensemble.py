@@ -1,11 +1,9 @@
 from collections import defaultdict
 
-from app.schemas.analyze import Classification
-from app.services.classifiers import (
-    AnalysisUnavailableError,
-    Classifier,
-    ClassifierResult,
-)
+from app.domain.enums import Classification
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.models import ClassifierResult
+from app.domain.ports import Classifier
 
 
 class EnsembleClassifier:
