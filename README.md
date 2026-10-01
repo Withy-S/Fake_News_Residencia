@@ -124,6 +124,7 @@ Os requisitos funcionais e não funcionais estão em [`docs/requisitos.md`](docs
 Davi 
 Mayara
 Miti
+Tayrine
 Rafaella
 Rayssa
 
