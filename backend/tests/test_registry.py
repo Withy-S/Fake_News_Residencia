@@ -2,7 +2,8 @@ import pytest
 
 import app.services.catalog  # noqa: F401
 from app.core.config import Settings
-from app.services.classifiers import AnalysisUnavailableError, PlaceholderClassifier
+from app.domain.errors import AnalysisUnavailableError
+from app.services.classifiers import PlaceholderClassifier
 from app.services.registry import UnavailableClassifier, available, build, register
 from app.services.resilience import ResilientClassifier
 
