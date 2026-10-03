@@ -1,0 +1,126 @@
+{
+  "fallback_acionado": {
+    "http": 200,
+    "json": {
+      "classification": "confiavel",
+      "confidence": 0.8,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": null,
+      "indicators": [],
+      "justifications": [
+        "justificativa de teste"
+      ],
+      "method": "ai_fallback",
+      "sources": [],
+      "status": "ok"
+    }
+  },
+  "fallback_indisponivel": {
+    "http": 200,
+    "json": {
+      "classification": "nao_verificado",
+      "confidence": 0.3,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": null,
+      "indicators": [],
+      "justifications": [
+        "A confiança do modelo ficou abaixo do mínimo e a análise complementar estava indisponível."
+      ],
+      "method": "ml_model",
+      "sources": [],
+      "status": "ok"
+    }
+  },
+  "indicador_no_fallback": {
+    "http": 200,
+    "json": {
+      "classification": "nao_verificado",
+      "confidence": 0.5,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": null,
+      "indicators": [
+        {
+          "code": "trusted_domain",
+          "description": "O domínio está na lista de fontes confiáveis. Isso não determina a veracidade do conteúdo porém indica uma fonte mais credível."
+        }
+      ],
+      "justifications": [
+        "justificativa de teste"
+      ],
+      "method": "ai_fallback",
+      "sources": [],
+      "status": "ok"
+    }
+  },
+  "indicador_whitelist": {
+    "http": 200,
+    "json": {
+      "classification": "suspeito",
+      "confidence": 0.9,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": null,
+      "indicators": [
+        {
+          "code": "trusted_domain",
+          "description": "O domínio está na lista de fontes confiáveis. Isso não determina a veracidade do conteúdo porém indica uma fonte mais credível."
+        }
+      ],
+      "justifications": [
+        "justificativa de teste"
+      ],
+      "method": "ml_model",
+      "sources": [],
+      "status": "ok"
+    }
+  },
+  "ml_confiante": {
+    "http": 200,
+    "json": {
+      "classification": "suspeito",
+      "confidence": 0.9,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": null,
+      "indicators": [],
+      "justifications": [
+        "justificativa de teste"
+      ],
+      "method": "ml_model",
+      "sources": [],
+      "status": "ok"
+    }
+  },
+  "texto_curto": {
+    "http": 200,
+    "json": {
+      "classification": null,
+      "confidence": null,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": {
+        "code": "texto_insuficiente",
+        "message": "O texto é curto demais para análise. Selecione um trecho com pelo menos 20 caracteres."
+      },
+      "indicators": [],
+      "justifications": [],
+      "method": null,
+      "sources": [],
+      "status": "error"
+    }
+  },
+  "tudo_indisponivel": {
+    "http": 200,
+    "json": {
+      "classification": null,
+      "confidence": null,
+      "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
+      "error": {
+        "code": "analise_indisponivel",
+        "message": "A análise está indisponível no momento. Tente novamente em instantes."
+      },
+      "indicators": [],
+      "justifications": [],
+      "method": null,
+      "sources": [],
+      "status": "error"
+    }
+  }
+}
