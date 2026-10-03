@@ -2,8 +2,9 @@ import time
 
 import pytest
 
-from app.schemas.analyze import Classification
-from app.services.classifiers import AnalysisUnavailableError, ClassifierResult
+from app.domain.enums import Classification
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.models import ClassifierResult
 from app.services.resilience import ResilientClassifier
 
 

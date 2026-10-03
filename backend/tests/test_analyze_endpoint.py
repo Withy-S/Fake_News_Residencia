@@ -1,9 +1,10 @@
 from fastapi.testclient import TestClient
 
 from app.api.v1.dependencies import get_pipeline
+from app.domain.enums import Classification
+from app.domain.errors import AnalysisUnavailableError
+from app.domain.models import ClassifierResult
 from app.main import app
-from app.schemas.analyze import Classification
-from app.services.classifiers import ClassifierResult
 from app.services.pipeline import AnalysisPipeline
 
 client = TestClient(app)
@@ -16,6 +17,11 @@ class StubClassifier:
 
     def classify(self, text):
         return ClassifierResult(self.classification, self.confidence, ["stub"])
+
+
+class BrokenClassifier:
+    def classify(self, text):
+        raise AnalysisUnavailableError("fora do ar")
 
 
 def override_pipeline(classification=Classification.SUSPICIOUS, confidence=0.9):
@@ -82,3 +88,25 @@ def test_analyze_usa_whitelist():
     assert body["method"] == "ml_model"
     assert body["classification"] == "suspeito"
     assert body["indicators"][0]["code"] == "trusted_domain"
+
+
+def test_analyze_sem_nenhum_mecanismo_devolve_erro_no_corpo():
+    pipeline = AnalysisPipeline(
+        classifier=BrokenClassifier(),
+        fallback=BrokenClassifier(),
+        trusted_domains=[],
+        min_confidence=0.6,
+        min_text_length=20,
+    )
+    app.dependency_overrides[get_pipeline] = lambda: pipeline
+    response = client.post(
+        "/api/v1/analyze",
+        json={
+            "analysis_type": "selecao",
+            "text": "Um texto longo o suficiente para passar da validação.",
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "error"
+    assert body["error"]["code"] == "analise_indisponivel"
