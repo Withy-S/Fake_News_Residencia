@@ -1,13 +1,7 @@
-from app.domain.enums import Classification, Method
-from app.domain.errors import AnalysisUnavailableError
+from app.domain.enums import Classification, IndicatorCode, Method
+from app.domain.errors import AnalysisUnavailableError, TextTooShortError
+from app.domain.models import AnalysisInput, AnalysisResult
 from app.domain.ports import Classifier
-from app.schemas.analyze import (
-    AnalyzeRequest,
-    AnalyzeResponse,
-    ErrorCode,
-    ErrorInfo,
-    Indicator,
-)
 from app.services.trustlist import is_trusted_domain
 
 
@@ -27,33 +21,15 @@ class AnalysisPipeline:
         self.min_confidence = min_confidence
         self.min_text_length = min_text_length
 
-    def analyze(self, request: AnalyzeRequest) -> AnalyzeResponse:
-        text = request.text.strip()
+    def analyze(self, data: AnalysisInput) -> AnalysisResult:
+        text = data.text.strip()
 
         if len(text) < self.min_text_length:
-            return AnalyzeResponse(
-                status="error",
-                error=ErrorInfo(
-                    code=ErrorCode.TEXT_TOO_SHORT,
-                    message=(
-                        "O texto é curto demais para análise. "
-                        f"Selecione um trecho com pelo menos {self.min_text_length} caracteres."
-                    ),
-                ),
-            )
+            raise TextTooShortError(self.min_text_length)
 
-        url = str(request.url) if request.url else None
         indicators = []
-        if is_trusted_domain(url, self.trusted_domains):
-            indicators.append(
-                Indicator(
-                    code="trusted_domain",
-                    description=(
-                        "O domínio está na lista de fontes confiáveis. "
-                        "Isso não determina a veracidade do conteúdo porém indica uma fonte mais credível."
-                    ),
-                )
-            )
+        if is_trusted_domain(data.url, self.trusted_domains):
+            indicators.append(IndicatorCode.TRUSTED_DOMAIN)
 
         try:
             ml = self.classifier.classify(text)
@@ -61,13 +37,12 @@ class AnalysisPipeline:
             ml = None  # RNF09: segue para o fallback em vez de quebrar
 
         if ml is not None and ml.confidence >= self.min_confidence:
-            return AnalyzeResponse(
-                status="ok",
-                indicators=indicators,
+            return AnalysisResult(
                 classification=ml.classification,
                 confidence=ml.confidence,
                 method=ml.method,
                 justifications=ml.justifications,
+                indicators=indicators,
             )
 
         try:
@@ -75,19 +50,8 @@ class AnalysisPipeline:
         except AnalysisUnavailableError:
             if ml is None:
                 # Nenhum mecanismo analisou o texto: é falha, não resultado (RF21).
-                return AnalyzeResponse(
-                    status="error",
-                    error=ErrorInfo(
-                        code=ErrorCode.ANALYSIS_UNAVAILABLE,
-                        message=(
-                            "A análise está indisponível no momento. "
-                            "Tente novamente em instantes."
-                        ),
-                    ),
-                )
-            return AnalyzeResponse(
-                status="ok",
-                indicators=indicators,
+                raise
+            return AnalysisResult(
                 classification=Classification.UNVERIFIED,
                 confidence=ml.confidence,
                 method=ml.method,
@@ -97,13 +61,13 @@ class AnalysisPipeline:
                         "e a análise complementar estava indisponível."
                     )
                 ],
+                indicators=indicators,
             )
 
-        return AnalyzeResponse(
-            status="ok",
-            indicators=indicators,
+        return AnalysisResult(
             classification=ai.classification,
             confidence=ai.confidence,
             method=Method.AI_FALLBACK,
             justifications=ai.justifications,
+            indicators=indicators,
         )

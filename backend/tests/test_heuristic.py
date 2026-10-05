@@ -1,4 +1,5 @@
-from app.schemas.analyze import AnalyzeRequest, Classification, Method
+from app.domain.enums import Classification, Method
+from app.domain.models import AnalysisInput
 from app.services.classifiers import UnavailableFallback
 from app.services.heuristic import LinguisticClassifier
 from app.services.pipeline import AnalysisPipeline
@@ -29,6 +30,6 @@ def test_pipeline_informa_o_metodo_linguistico():
         min_confidence=0.6,
         min_text_length=20,
     )
-    resp = pipeline.analyze(AnalyzeRequest(analysis_type="selecao", text=ALARMISTA))
+    resp = pipeline.analyze(AnalysisInput(text=ALARMISTA))
     assert resp.method == Method.LINGUISTIC
     assert resp.classification == Classification.SUSPICIOUS
