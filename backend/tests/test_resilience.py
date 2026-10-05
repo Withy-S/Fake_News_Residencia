@@ -2,10 +2,10 @@ import time
 
 import pytest
 
+from app.adapters.resilience import ResilientClassifier
 from app.domain.enums import Classification
 from app.domain.errors import AnalysisUnavailableError
 from app.domain.models import ClassifierResult
-from app.services.resilience import ResilientClassifier
 
 
 class Rapido:

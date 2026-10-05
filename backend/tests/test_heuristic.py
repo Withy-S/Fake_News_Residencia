@@ -1,7 +1,7 @@
+from app.adapters.classifiers import UnavailableFallback
+from app.adapters.heuristic import LinguisticClassifier
 from app.domain.enums import Classification, Method
 from app.domain.models import AnalysisInput
-from app.services.classifiers import UnavailableFallback
-from app.services.heuristic import LinguisticClassifier
 from app.services.pipeline import AnalysisPipeline
 
 ALARMISTA = "URGENTE!!! COMPARTILHE antes que apaguem, a mídia não mostra ISSO!!"

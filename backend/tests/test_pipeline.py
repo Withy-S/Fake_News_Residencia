@@ -1,9 +1,9 @@
 import pytest
 
+from app.adapters.classifiers import PlaceholderClassifier, UnavailableFallback
 from app.domain.enums import Classification, IndicatorCode, Method
 from app.domain.errors import AnalysisUnavailableError, TextTooShortError
 from app.domain.models import AnalysisInput, ClassifierResult
-from app.services.classifiers import PlaceholderClassifier, UnavailableFallback
 from app.services.pipeline import AnalysisPipeline
 
 TEXTO = "Texto longo o bastante para passar da validação de tamanho."

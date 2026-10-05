@@ -1,11 +1,11 @@
 import pytest
 
 import app.services.catalog  # noqa: F401
+from app.adapters.ensemble import EnsembleClassifier
 from app.core.config import Settings
 from app.domain.enums import Classification, Method
 from app.domain.errors import AnalysisUnavailableError
 from app.domain.models import ClassifierResult
-from app.services.ensemble import EnsembleClassifier
 from app.services.registry import build
 
 

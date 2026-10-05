@@ -1,11 +1,11 @@
 import pytest
 
 import app.services.catalog  # noqa: F401
+from app.adapters.classifiers import PlaceholderClassifier
+from app.adapters.resilience import ResilientClassifier
 from app.core.config import Settings
 from app.domain.errors import AnalysisUnavailableError
-from app.services.classifiers import PlaceholderClassifier
 from app.services.registry import UnavailableClassifier, available, build, register
-from app.services.resilience import ResilientClassifier
 
 
 def test_nomes_do_catalogo_estao_registrados():
