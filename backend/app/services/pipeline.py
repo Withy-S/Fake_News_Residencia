@@ -2,7 +2,7 @@ from app.domain.enums import Classification, IndicatorCode, Method
 from app.domain.errors import AnalysisUnavailableError, TextTooShortError
 from app.domain.models import AnalysisInput, AnalysisResult
 from app.domain.ports import Classifier
-from app.services.trustlist import is_trusted_domain
+from app.domain.trustlist import is_trusted_domain
 
 
 class AnalysisPipeline:

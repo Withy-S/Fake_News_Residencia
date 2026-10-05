@@ -1,4 +1,4 @@
-from app.services.trustlist import extract_host, is_trusted_domain
+from app.domain.trustlist import extract_host, is_trusted_domain
 
 TRUSTED = ["gov.br", "who.int"]
 
