@@ -1,8 +1,8 @@
 from app.adapters.classifiers import UnavailableFallback
 from app.adapters.heuristic import LinguisticClassifier
+from app.application.pipeline import AnalysisPipeline
 from app.domain.enums import Classification, Method
 from app.domain.models import AnalysisInput
-from app.services.pipeline import AnalysisPipeline
 
 ALARMISTA = "URGENTE!!! COMPARTILHE antes que apaguem, a mídia não mostra ISSO!!"
 NEUTRO = "Segundo o IBGE, a inflação de agosto ficou dentro da meta prevista."
