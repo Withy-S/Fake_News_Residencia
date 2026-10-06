@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Anti Fake News</title>
+  
+  <!-- Trazendo a fonte 'Inter' direto do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Conectando nosso arquivo de design (CSS) -->
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<div class="glass-container">
+    
+<!-- CABEÇALHO: Onde ficam os ícones do topo -->
+    <header class="top-bar">
+      <button class="icon-btn reset-btn" title="Nova Consulta">↺</button>
+      <div class="window-controls">
+        <span class="mac-btn minimize"></span>
+        <span class="mac-btn close"></span>
+      </div>
+    </header>
+
+<!-- CONTEÚDO PRINCIPAL: A porcentagem e o texto -->
+    <main class="analysis-section">
+      <p class="verification-text">Verificamos que seu texto tem a seguinte chance de ser fake:</p>
+      
+      <h2 class="percentage-display">
+  <span id="fake-percent" style="--fill-level: 50%;">50%</span>
+</h2>
+    </main>
+
+    <!-- RODAPÉ: A lista de notícias confiáveis -->
+    <footer class="news-section">
+      <p class="news-title">Notícias Confiáveis Relacionadas:</p>
+      <ul class="news-list">
+        <li><a href="#">Link da Notícia Confiável 1</a></li>
+        <li><a href="#">Link da Notícia Confiável 2</a></li>
+        <li><a href="#">Link da Notícia Confiável 3</a></li>
+      </ul>
+    </footer>
+
+  </div>
+  
+  <!-- Conectando nosso cérebro (JavaScript) -->
+  <script src="popup.js"></script>
+  </body>
+</html>
