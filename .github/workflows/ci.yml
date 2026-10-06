@@ -42,5 +42,8 @@ jobs:
       - name: Verificar código com Ruff
         run: python -m ruff check app tests
 
+      - name: Verificar camadas da arquitetura (import-linter)
+        run: lint-imports
+
       - name: Executar testes
         run: python -m pytest tests -q
