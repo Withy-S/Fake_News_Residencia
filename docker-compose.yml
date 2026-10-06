@@ -1,0 +1,10 @@
+services:
+  api:
+    build:
+      context: ./backend
+    image: fakenews-api:dev
+    env_file:
+      - ./backend/.env
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
