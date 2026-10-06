@@ -1,9 +1,9 @@
 from functools import lru_cache
 
-import app.services.catalog  # noqa: F401  (executa os @register)
+import app.bootstrap.catalog  # noqa: F401  (executa os @register)
+from app.application.pipeline import AnalysisPipeline
+from app.bootstrap.registry import build
 from app.core.config import settings
-from app.services.pipeline import AnalysisPipeline
-from app.services.registry import build
 
 
 @lru_cache

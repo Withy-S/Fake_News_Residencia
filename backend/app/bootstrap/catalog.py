@@ -3,11 +3,11 @@
 Classificador novo? Crie a classe, registre a fábrica aqui e use o nome no .env.
 """
 
+from app.adapters.classifiers import PlaceholderClassifier, UnavailableFallback
+from app.adapters.ensemble import EnsembleClassifier
+from app.adapters.heuristic import LinguisticClassifier
+from app.bootstrap.registry import build, register
 from app.core.config import Settings
-from app.services.classifiers import PlaceholderClassifier, UnavailableFallback
-from app.services.ensemble import EnsembleClassifier
-from app.services.heuristic import LinguisticClassifier
-from app.services.registry import build, register
 
 
 @register("placeholder")

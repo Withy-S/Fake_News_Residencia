@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends
 
 from app.api.v1.dependencies import get_pipeline
 from app.api.v1.mappers import to_input, to_response
+from app.application.pipeline import AnalysisPipeline
 from app.schemas.analyze import AnalyzeRequest, AnalyzeResponse
-from app.services.pipeline import AnalysisPipeline
 
 api_router = APIRouter()
 

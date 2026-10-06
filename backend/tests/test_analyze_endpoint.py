@@ -1,11 +1,11 @@
 from fastapi.testclient import TestClient
 
 from app.api.v1.dependencies import get_pipeline
+from app.application.pipeline import AnalysisPipeline
 from app.domain.enums import Classification
 from app.domain.errors import AnalysisUnavailableError
 from app.domain.models import ClassifierResult
 from app.main import app
-from app.services.pipeline import AnalysisPipeline
 
 client = TestClient(app)
 
