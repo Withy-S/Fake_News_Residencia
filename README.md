@@ -57,6 +57,12 @@ Conteúdo sem evidência suficiente é classificado como **não verificado**, e 
 
 ## Como rodar o back-end
 
+Para testar apenas a extensão atual, carregue `extension/` em `chrome://extensions`.
+Ela mantém o visual original e pesquisa coberturas em R7, Correio Braziliense e
+CNN Brasil pela internet, com comparação local de títulos pelo Transformers.js.
+Esse fluxo não precisa do backend. A porcentagem de veracidade ainda é demonstrativa;
+a similaridade serve somente para selecionar matérias relacionadas.
+
 Requisitos: Python 3.12 ou superior. No Ubuntu/Debian, instale também o módulo de ambientes virtuais: `sudo apt install python3-venv`.
 
 ```bash

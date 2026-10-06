@@ -3,48 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <title>Anti Fake News</title>
-  
-  <!-- Trazendo a fonte 'Inter' direto do Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Conectando nosso arquivo de design (CSS) -->
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-<div class="glass-container">
-    
-<!-- CABEÇALHO: Onde ficam os ícones do topo -->
+  <div class="glass-container">
     <header class="top-bar">
-      <button class="icon-btn reset-btn" title="Nova Consulta">↺</button>
+      <button id="back" class="icon-btn reset-btn" title="Nova Consulta" aria-label="Nova consulta">↺</button>
       <div class="window-controls">
-        <span class="mac-btn minimize"></span>
-        <span class="mac-btn close"></span>
+        <button id="minimize" class="mac-btn minimize" title="Fechar popup" aria-label="Fechar popup"></button>
+        <button id="close" class="mac-btn close" title="Fechar popup" aria-label="Fechar popup"></button>
       </div>
     </header>
-
-<!-- CONTEÚDO PRINCIPAL: A porcentagem e o texto -->
-    <main class="analysis-section">
-      <p class="verification-text">Verificamos que seu texto tem a seguinte chance de ser fake:</p>
-      
-      <h2 class="percentage-display">
-  <span id="fake-percent" style="--fill-level: 50%;">50%</span>
-</h2>
-    </main>
-
-    <!-- RODAPÉ: A lista de notícias confiáveis -->
-    <footer class="news-section">
-      <p class="news-title">Notícias Confiáveis Relacionadas:</p>
-      <ul class="news-list">
-        <li><a href="#">Link da Notícia Confiável 1</a></li>
-        <li><a href="#">Link da Notícia Confiável 2</a></li>
-        <li><a href="#">Link da Notícia Confiável 3</a></li>
-      </ul>
-    </footer>
-
+    <section id="home-screen" class="analysis-section">
+      <h2 id="home-title" tabindex="-1">Como deseja consultar?</h2>
+      <div class="home-actions">
+        <button id="read-page">Ler a página inteira</button>
+        <button id="read-selection">Selecionar trecho da página</button>
+      </div>
+      <p class="hint">Para consultar um trecho, marque o texto na página antes de abrir a extensão. O título será capturado automaticamente.</p>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="result-screen" hidden>
+      <main class="analysis-section">
+        <p id="result-title" class="verification-text" tabindex="-1">Chance de ser fake — demonstração:</p>
+        <h2 class="percentage-display"><span id="fake-percent">0%</span></h2>
+        <p class="hint">Porcentagem ilustrativa, sem análise real.</p>
+        <p id="page-title"></p>
+      </main>
+      <footer class="news-section">
+        <p class="news-title">Esta notícia em outras fontes:</p>
+        <p id="search-status" role="status" aria-live="polite"></p>
+        <ul id="sources" class="news-list"></ul>
+        <p class="hint">Busca em R7, Correio Braziliense e CNN Brasil. Os links abrem as matérias via Google Notícias. Compare os relatos; a semelhança não confirma a notícia.</p>
+      </footer>
+    </section>
   </div>
-  
-  <!-- Conectando nosso cérebro (JavaScript) -->
-  <script src="popup.js"></script>
-  </body>
+  <script type="module" src="popup.js"></script>
+</body>
 </html>
