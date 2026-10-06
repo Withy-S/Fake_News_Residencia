@@ -1,13 +1,23 @@
 {
   "manifest_version": 3,
   "name": "Anti Fake News",
-  "version": "1.0",
-  "description": "Analisa textos para detectar fake news e sugere fontes confiáveis.",
-  "action": {
-    "default_popup": "popup/popup.html"
-  },
+  "version": "2.3.0",
+  "description": "Apoia a avaliação de notícias e encontra outras coberturas em fontes confiáveis.",
   "permissions": [
     "activeTab",
     "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "host_permissions": [
+    "https://news.google.com/*"
   ]
 }

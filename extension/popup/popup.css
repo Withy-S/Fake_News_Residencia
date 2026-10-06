@@ -1,134 +1,127 @@
-
-/* 1. Configurando o "Corpo" (A janela inteira da extensão) */
 body {
+  position: relative;
+  isolation: isolate;
   width: 320px;
   margin: 0;
   padding: 15px;
   font-family: 'Inter', sans-serif;
-  
-  /* A MÁGICA NOVA: Um degradê do azul noturno para o azul metálico */
-  background: linear-gradient(135deg, #141E30, #243B55); 
+
+  background: linear-gradient(135deg, rgba(20, 30, 48, 0.94), rgba(36, 59, 85, 0.86));
   color: #ffffff;
 }
 
-/* 2. Criando o Efeito Glassmorphism (Vidro Fosco) na nossa caixa principal */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 0% 10%, rgba(77, 166, 255, 0.35), transparent 60%),
+    radial-gradient(ellipse at 100% 90%, rgba(122, 105, 218, 0.25), transparent 65%);
+}
+
 .glass-container {
-  background: rgba(255, 255, 255, 0.2); /* Um branco com apenas 5% de opacidade */
-  backdrop-filter: blur(12px); /* A mágica do desfoque do vidro */
-  -webkit-backdrop-filter: blur(12px); /* Garantia para funcionar no motor do Chrome */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Uma borda super fininha e clara */
-  border-radius: 16px; /* Cantos arredondados */
-  padding: 20px; /* Espaço interno para o texto não grudar nas bordas */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Sombreado para dar impressão de flutuar */
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.32);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-/* --- 3. O Cabeçalho (Botões do Topo) --- */
 .top-bar {
-  display: flex; /* Ativa a magia de organizar lado a lado */
-  justify-content: space-between; /* Empurra a lupa para a esquerda e o X para a direita */
-  align-items: center; /* Centra tudo verticalmente */
-  margin-bottom: 20px; /* Dá um empurrão para baixo para não colar no texto */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* Ocultar a caixa padrão dos botões */
 .icon-btn {
   background: none;
   border: none;
-  color: #aaaaaa; /* Um cinzento clarinho */
+  color: #aaaaaa;
   font-size: 16px;
-  cursor: pointer; /* Transforma a seta do rato numa mãozinha */
+  cursor: pointer;
 }
 
 .window-controls button {
-  margin-left: 10px; /* Dá um espacinho entre o minimizar e o fechar */
+  margin-left: 10px;
 }
 
-/* --- 4. A Porcentagem Gigante --- */
 .analysis-section {
-  text-align: center; /* Centra o texto todo nesta área */
+  text-align: center;
 }
 
 .verification-text {
   font-size: 14px;
-  color: #cccccc; /* Texto secundário ligeiramente mais escuro */
+  color: #cccccc;
 }
 
-.percentage-display {
-  font-size: 48px; /* Número gigante! */
-  margin: 10px 0;
-}
-
-/* --- 5. A Lista de Notícias --- */
 .news-section {
   margin-top: 25px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Uma linha de divisão fininha */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 15px;
 }
 
 .news-list {
-  list-style: none; /* Remove aquelas bolinhas feias da lista */
+  list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .news-list li {
-  margin-bottom: 8px; /* Espaço entre os links */
+  margin-bottom: 8px;
 }
 
-/* --- O EFEITO BALDE D'ÁGUA (AJUSTE FINO) --- */
 .percentage-display {
   font-size: 56px;
   margin: 10px 0;
   display: flex;
-  justify-content: center; /* Mantém tudo no meio */
+  justify-content: center;
   align-items: center;
 }
 
-/* --- O MOTOR DE FLUÍDOS (SVG + CSS) --- */
 #fake-percent {
   font-weight: 900;
   display: inline-block;
-  line-height: 1; 
-  
-  /* 1. O fundo vermelho base (a parte "vazia") */
-  background-color: #ff4d4d;
-  
-  /* 2. A Onda Verde (Amplitude reduzida de 20 para 8 mexendo no vetor Q 25 22) */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="300" viewBox="0 0 100 300"><path d="M 0 30 Q 25 22 50 30 T 100 30 L 100 300 L 0 300 Z" fill="%2300cc66" /></svg>');
-  
-  /* Faz a onda se repetir infinitamente na horizontal */
+  line-height: 1;
+
+  background-color: #00cc66;
+
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="300" viewBox="0 0 100 300"><path d="M 0 30 Q 25 22 50 30 T 100 30 L 100 300 L 0 300 Z" fill="%23ff4d4d" /></svg>');
+
   background-repeat: repeat-x;
-  background-size: 60px 180px; /* Define o tamanho da curva (amplitude) */
-  
-  /* 3. A Posição ditada pelo JavaScript (X é o fluxo, Y é a altura) */
+  background-size: 60px 180px;
+
   background-position: var(--wave-x, 0px) var(--fill-y, 30px);
-  
+
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* --- DEIXANDO OS LINKS DE NOTÍCIAS MAIS BONITOS --- */
 .news-list a {
-  display: block; /* Transforma o link de um texto simples para uma "caixa" */
-  background: rgba(255, 255, 255, 0.08); /* Fundo levemente branco e transparente */
-  color: #ffffff; /* Texto branco no lugar daquele azul feio */
-  text-decoration: none; /* Tira o sublinhado */
-  padding: 10px 12px; /* Dá um respiro dentro da caixa */
-  border-radius: 8px; /* Arredonda os cantinhos do cartão */
+  display: block;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
   font-size: 13px;
-  border-left: 3px solid #4da6ff; /* Uma faixinha azul na esquerda pra dar um charme */
-  transition: all 0.3s ease; /* Prepara uma animação suave de 0.3 segundos */
+  border-left: 3px solid #4da6ff;
+  transition: all 0.3s ease;
 }
 
-/* O que acontece quando passamos o mouse por cima do link (Hover) */
 .news-list a:hover {
-  background: rgba(255, 255, 255, 0.15); /* Fica um pouco mais claro */
-  transform: translateX(4px); /* O botão dá um "pulinho" para a direita */
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
 }
-/* --- BOTÕES ESTILO MAC (Fechando e Minimizando) --- */
+
 .window-controls {
   display: flex;
-  gap: 8px; /* Espaço entre as bolinhas */
+  gap: 8px;
 }
 
 .mac-btn {
@@ -139,10 +132,9 @@ body {
   cursor: pointer;
 }
 
-.mac-btn.minimize { background-color: #ffbd2e; } /* Bolinha amarela */
-.mac-btn.close { background-color: #ff5f56; } /* Bolinha vermelha */
+.mac-btn.minimize { background-color: #ffbd2e; }
+.mac-btn.close { background-color: #ff5f56; }
 
-/* --- BOTÃO DE RESET (A Lupa/Seta) --- */
 .reset-btn {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
@@ -157,5 +149,23 @@ body {
 
 .reset-btn:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: rotate(-45deg); /* Dá uma giradinha ao passar o mouse */
+  transform: rotate(-45deg);
 }
+
+[hidden] { display: none !important; }
+.home-actions { display: grid; gap: 12px; margin: 22px 0; }
+.home-actions button {
+  font: inherit; color: white; text-align: left; font-size: 14px;
+  padding: 14px 12px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.2); border-left: 3px solid #4da6ff;
+  background: rgba(255,255,255,.08); cursor: pointer;
+}
+.home-actions button:hover { background: rgba(255,255,255,.15); }
+button:disabled { opacity: .5; cursor: wait; }
+.hint { font-size: 12px; color: #ddd; line-height: 1.5; }
+#status, #search-status { font-size: 13px; line-height: 1.5; }
+#status:empty { display: none; }
+#page-title { font-size: 13px; overflow-wrap: anywhere; }
+.news-list small { display: block; margin-top: 5px; color: #ddd; }
+.window-controls .mac-btn { padding: 0; border: 0; }
+button:focus-visible, a:focus-visible { outline: 2px solid #4da6ff; outline-offset: 3px; }
