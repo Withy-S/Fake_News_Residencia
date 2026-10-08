@@ -43,6 +43,7 @@ class AnalysisPipeline:
                 method=ml.method,
                 justifications=ml.justifications,
                 indicators=indicators,
+                fake_probability=ml.fake_probability,
             )
 
         try:
@@ -55,6 +56,7 @@ class AnalysisPipeline:
                 classification=Classification.UNVERIFIED,
                 confidence=ml.confidence,
                 method=ml.method,
+                fake_probability=ml.fake_probability,
                 justifications=[
                     (
                         "A confiança do modelo ficou abaixo do mínimo "
@@ -70,4 +72,5 @@ class AnalysisPipeline:
             method=Method.AI_FALLBACK,
             justifications=ai.justifications,
             indicators=indicators,
+            fake_probability=ai.fake_probability,
         )

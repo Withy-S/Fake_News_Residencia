@@ -4,6 +4,7 @@
     "json": {
       "classification": "confiavel",
       "confidence": 0.8,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": null,
       "indicators": [],
@@ -20,6 +21,7 @@
     "json": {
       "classification": "nao_verificado",
       "confidence": 0.3,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": null,
       "indicators": [],
@@ -36,6 +38,7 @@
     "json": {
       "classification": "nao_verificado",
       "confidence": 0.5,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": null,
       "indicators": [
@@ -57,6 +60,7 @@
     "json": {
       "classification": "suspeito",
       "confidence": 0.9,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": null,
       "indicators": [
@@ -78,6 +82,7 @@
     "json": {
       "classification": "suspeito",
       "confidence": 0.9,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": null,
       "indicators": [],
@@ -94,6 +99,7 @@
     "json": {
       "classification": null,
       "confidence": null,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": {
         "code": "texto_insuficiente",
@@ -111,6 +117,7 @@
     "json": {
       "classification": null,
       "confidence": null,
+      "fake_probability": null,
       "disclaimer": "Classificação automática, sujeita a erros. Não é uma verificação de fatos: pesquise em fontes confiáveis.",
       "error": {
         "code": "analise_indisponivel",

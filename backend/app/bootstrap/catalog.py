@@ -6,6 +6,7 @@ Classificador novo? Crie a classe, registre a fábrica aqui e use o nome no .env
 from app.adapters.classifiers import PlaceholderClassifier, UnavailableFallback
 from app.adapters.ensemble import EnsembleClassifier
 from app.adapters.heuristic import LinguisticClassifier
+from app.adapters.stacking_classifier import StackingClassifier
 from app.bootstrap.registry import build, register
 from app.core.config import Settings
 
@@ -24,6 +25,11 @@ def _ai_fallback(settings: Settings) -> UnavailableFallback:
 @register("linguistico")
 def _linguistico(settings: Settings) -> LinguisticClassifier:
     return LinguisticClassifier()
+
+
+@register("stacking")
+def _stacking(settings: Settings) -> StackingClassifier:
+    return StackingClassifier(settings.stacking_model_path)
 
 
 @register("combinado", resilient=False)  # cada membro já tem o próprio timeout

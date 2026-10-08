@@ -8,12 +8,10 @@ Extensão de navegador (Chrome) que ajuda o usuário a avaliar a confiabilidade 
 
 | Componente | Estado |
 |---|---|
-| Back-end: estrutura base e `/health` | concluído |
-| Back-end: configuração, contrato da API e whitelist | em andamento |
-| Back-end: endpoint `/analyze` e pipeline de análise | a fazer |
-| Modelo de Machine Learning | a treinar |
+| Back-end: API `/health` e `/analyze` | disponível localmente |
+| Modelo de Machine Learning | stacking integrado localmente |
 | Análise complementar por IA (fallback) | a fazer |
-| Extensão | (preencher) |
+| Extensão: análise via API local | disponível para teste |
 
 ## O que o projeto faz
 
@@ -57,13 +55,12 @@ Conteúdo sem evidência suficiente é classificado como **não verificado**, e 
 
 ## Como rodar o back-end
 
-Para testar apenas a extensão atual, carregue `extension/` em `chrome://extensions`.
-Ela mantém o visual original e pesquisa coberturas em R7, Correio Braziliense e
-CNN Brasil pela internet, com comparação local de títulos pelo Transformers.js.
-Esse fluxo não precisa do backend. A porcentagem de veracidade ainda é demonstrativa;
-a similaridade serve somente para selecionar matérias relacionadas.
+O modelo foi treinado com Python 3.14 e scikit-learn 1.9.1. Para reproduzir a
+inferência local, use a mesma versão principal/secundária do Python e as versões
+fixadas em `backend/requirements.txt`.
 
-Requisitos: Python 3.12 ou superior. No Ubuntu/Debian, instale também o módulo de ambientes virtuais: `sudo apt install python3-venv`.
+Requisitos: Python 3.14 e venv. O artefato `backend/models/stacking.joblib` é
+necessário para iniciar o classificador; ele é incluído neste repositório.
 
 ```bash
 git clone https://github.com/Withy-S/Fake_News_Residencia.git
@@ -78,6 +75,14 @@ uvicorn app.main:app --reload
 ```
 
 A documentação interativa da API fica em http://127.0.0.1:8000/docs.
+
+Para testar a extensão, em `chrome://extensions` ative o modo do desenvolvedor e
+carregue `extension/` como extensão descompactada. Mantenha o backend rodando em
+`http://127.0.0.1:8000`, abra uma notícia e use um dos modos de análise. O popup
+mostra a probabilidade estimada pelo stacking; ela não é uma verificação factual.
+Se o Chrome bloquear a requisição por CORS, copie o ID da extensão da página de
+extensões e configure `FN_ALLOWED_ORIGINS=["chrome-extension://ID_DA_EXTENSAO"]`
+em `backend/.env`, depois reinicie a API.
 
 Para rodar os testes e o lint, sempre de dentro de `backend/`:
 

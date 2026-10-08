@@ -16,7 +16,11 @@ function setup() {
     if (!elements.has(id)) { const el = element(); el.hidden = id === 'result-screen'; elements.set(id, el); }
     return elements.get(id);
   };
-  const state = { calls: [], captureError: false, newsError: false, result: { sources: [], unavailable_publishers: [] } };
+  const state = {
+    calls: [], analysisCalls: [], captureError: false, newsError: false,
+    result: { sources: [], unavailable_publishers: [] },
+    analysis: { status: 'ok', classification: 'suspeito', confidence: 0.91, fake_probability: 0.84, method: 'ml_model' },
+  };
   const context = vm.createContext({
     document: { getElementById: get, createElement: element },
     window: { matchMedia: () => ({ matches: true }), close() {} },
@@ -30,6 +34,7 @@ function setup() {
       if (state.newsError) throw new Error('Busca indisponível');
       return state.result;
     },
+    analyzeText: async (data) => { state.analysisCalls.push(data); return state.analysis; },
   });
   vm.runInContext(source.replace(/^import .*;\n/gm, ''), context);
   return { get, state, context };
@@ -43,7 +48,9 @@ test('dois modos, resultado, retorno e falha de captura', async () => {
     assert.equal(state.calls.at(-1), mode);
     assert.equal(get('result-screen').hidden, false);
     assert.equal(get('home-screen').hidden, true);
-    assert.equal(get('fake-percent').textContent, '50%');
+    assert.equal(state.analysisCalls.at(-1).analysis_type, mode);
+    assert.equal(get('fake-percent').textContent, '84%');
+    assert.match(get('analysis-status').textContent, /Classificação: Suspeito/);
     assert.equal(get('page-title').textContent, '<Título>');
     get('back').listeners.click();
     assert.equal(get('result-screen').hidden, true);
