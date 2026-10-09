@@ -9,7 +9,7 @@ Extensão de navegador (Chrome) que ajuda o usuário a avaliar a confiabilidade 
 | Componente | Estado |
 |---|---|
 | Back-end: estrutura base e `/health` | concluído |
-| Back-end: configuração, contrato da API e whitelist | em andamento |
+| Back-end: configuração, contrato da API e trustlist | em andamento |
 | Back-end: endpoint `/analyze` e pipeline de análise | a fazer |
 | Modelo de Machine Learning | a treinar |
 | Análise complementar por IA (fallback) | a fazer |
@@ -20,7 +20,7 @@ Extensão de navegador (Chrome) que ajuda o usuário a avaliar a confiabilidade 
 Escopo do MVP, conforme os [requisitos](docs/requisitos.md):
 
 - Análise de um trecho selecionado ou do conteúdo principal da página
-- Verificação do domínio contra uma whitelist de fontes confiáveis
+- Verificação do domínio contra uma trustlist de fontes confiáveis
 - Classificação do texto por Machine Learning, com nível de confiança
 - Análise complementar por IA quando a confiança do modelo é baixa
 - Classificação em **confiável**, **suspeito** ou **não verificado**
@@ -95,7 +95,7 @@ Os parâmetros ficam em variáveis de ambiente (arquivo `backend/.env`, criado a
 | `FN_MIN_TEXT_LENGTH` | Tamanho mínimo do texto para análise | `20` |
 | `FN_MIN_CONFIDENCE` | Confiança mínima do modelo antes do fallback | `0.6` |
 | `FN_FALLBACK_METHOD` | Mecanismo usado como fallback | `ai_fallback` |
-| `FN_TRUSTED_DOMAINS` | Whitelist de domínios, em JSON | `[]` |
+| `FN_TRUSTED_DOMAINS` | trustlist de domínios, em JSON | `[]` |
 | `FN_REQUEST_TIMEOUT_SECONDS` | Timeout das requisições | `10` |
 | `FN_ALLOWED_ORIGINS` | Origens permitidas (CORS), em JSON | `[]` |
 
