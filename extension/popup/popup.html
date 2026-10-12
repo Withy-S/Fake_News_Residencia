@@ -4,39 +4,73 @@
   <meta charset="UTF-8">
   <title>Anti Fake News</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="glass-container">
-    <header class="top-bar">
-      <button id="back" class="icon-btn reset-btn" title="Nova Consulta" aria-label="Nova consulta">↺</button>
-      <div class="window-controls">
-        <button id="minimize" class="mac-btn minimize" title="Fechar popup" aria-label="Fechar popup"></button>
-        <button id="close" class="mac-btn close" title="Fechar popup" aria-label="Fechar popup"></button>
+  <div class="hud">
+    <header class="hud-header">
+      <div class="brand">
+        <span class="brand__badge" aria-hidden="true">AF</span>
+        <div class="brand__text">
+          <span class="brand__name">ANTI FAKE<span class="brand__dot">·</span>NEWS</span>
+          <span class="brand__status"><span class="status-dot" aria-hidden="true"></span>Sistema ativo</span>
+        </div>
+      </div>
+      <div class="hud-controls">
+        <button id="back" class="icon-btn" title="Nova consulta" aria-label="Nova consulta">⟲</button>
+        <button id="minimize" class="icon-btn" title="Fechar popup" aria-label="Fechar popup">–</button>
+        <button id="close" class="icon-btn icon-btn--danger" title="Fechar popup" aria-label="Fechar popup">×</button>
       </div>
     </header>
-    <section id="home-screen" class="analysis-section">
+
+    <section id="home-screen" class="panel">
+      <p class="eyebrow">[ 01 // NOVA ANÁLISE ]</p>
       <h2 id="home-title" tabindex="-1">Como deseja consultar?</h2>
       <div class="home-actions">
-        <button id="read-page">Ler a página inteira</button>
-        <button id="read-selection">Selecionar trecho da página</button>
+        <button id="read-page" class="action-btn">
+          <span class="action-btn__icon" aria-hidden="true">▣</span>
+          <span class="action-btn__label">Ler a página inteira</span>
+        </button>
+        <button id="read-selection" class="action-btn">
+          <span class="action-btn__icon" aria-hidden="true">▤</span>
+          <span class="action-btn__label">Selecionar trecho da página</span>
+        </button>
       </div>
       <p class="hint">Para consultar um trecho, marque o texto na página antes de abrir a extensão. O título será capturado automaticamente.</p>
-      <p id="status" role="status" aria-live="polite"></p>
+      <p id="status" role="status" aria-live="polite" class="status-line"></p>
     </section>
+
     <section id="result-screen" hidden>
-      <main class="analysis-section">
-        <p id="result-title" class="verification-text" tabindex="-1">Chance de ser fake — demonstração:</p>
-        <h2 class="percentage-display"><span id="fake-percent">0%</span></h2>
-        <p class="hint">Porcentagem ilustrativa, sem análise real.</p>
-        <p id="page-title"></p>
+      <main class="panel panel--verdict">
+        <p class="eyebrow">[ 02 // RESULTADO ]</p>
+        <div class="gauge-row">
+          <div class="gauge">
+            <svg id="gauge-svg" class="gauge__svg" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="gauge__track" cx="50" cy="50" r="42"></circle>
+              <circle id="gauge-progress" class="gauge__progress" cx="50" cy="50" r="42"></circle>
+            </svg>
+            <div class="gauge__center">
+              <span id="fake-percent" class="gauge__percent">0%</span>
+              <span class="gauge__label">chance de fake</span>
+            </div>
+          </div>
+          <div class="gauge-info">
+            <p id="result-title" class="verification-text" tabindex="-1">Analisando…</p>
+            <p class="hint">
+              <span id="verdict-tag" class="tag" hidden></span>
+              <span id="verdict-detail">Consultando o modelo de Machine Learning…</span>
+            </p>
+          </div>
+        </div>
+        <p id="page-title" class="target-title"></p>
       </main>
-      <footer class="news-section">
-        <p class="news-title">Esta notícia em outras fontes:</p>
-        <p id="search-status" role="status" aria-live="polite"></p>
+      <footer class="panel panel--sources">
+        <p class="eyebrow">[ 03 // COBERTURA EM OUTRAS FONTES ]</p>
+        <p id="search-status" role="status" aria-live="polite" class="status-line"></p>
         <ul id="sources" class="news-list"></ul>
-        <p class="hint">Busca em R7, Correio Braziliense e CNN Brasil. Os links abrem as matérias via Google Notícias. Compare os relatos; a semelhança não confirma a notícia.</p>
+        <p class="hint">Busca em R7, Correio Braziliense e CNN Brasil, via Google Notícias. Compare os relatos; a semelhança não confirma a notícia.</p>
       </footer>
     </section>
   </div>

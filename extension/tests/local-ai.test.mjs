@@ -78,10 +78,10 @@ test('listener mantém canal assíncrono e responde falhas sem travar a fila', a
   assert.equal((await send('Título', [{ ...news[0], link: 'javascript:alert(1)' }])).ok, false);
 });
 
-test('manifest aponta para o novo popup e permite WASM local sem backend', async () => {
+test('manifest aponta para o novo popup, permite WASM local e o backend opcional', async () => {
   const manifest = JSON.parse(await readFile(new URL('../manifest.json', import.meta.url)));
   assert.equal(manifest.background.type, 'module');
   assert.equal(manifest.action.default_popup, 'popup/popup.html');
   assert.match(manifest.content_security_policy.extension_pages, /wasm-unsafe-eval/);
-  assert.deepEqual(manifest.host_permissions, ['https://news.google.com/*']);
+  assert.deepEqual(manifest.host_permissions, ['https://news.google.com/*', 'http://127.0.0.1:8000/*']);
 });

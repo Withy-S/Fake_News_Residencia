@@ -6,6 +6,7 @@ Classificador novo? Crie a classe, registre a fábrica aqui e use o nome no .env
 from app.adapters.classifiers import PlaceholderClassifier, UnavailableFallback
 from app.adapters.ensemble import EnsembleClassifier
 from app.adapters.heuristic import LinguisticClassifier
+from app.adapters.ml_classifier import MLStackingClassifier
 from app.bootstrap.registry import build, register
 from app.core.config import Settings
 
@@ -13,6 +14,13 @@ from app.core.config import Settings
 @register("placeholder")
 def _placeholder(settings: Settings) -> PlaceholderClassifier:
     return PlaceholderClassifier()
+
+
+@register("ml_stacking")
+def _ml_stacking(settings: Settings) -> MLStackingClassifier:
+    # RF10: stacking de 6 modelos treinado pelo time de dados (ver ml/README.md).
+    # Opt-in via FN_CLASSIFIER=ml_stacking; o padrão continua "placeholder".
+    return MLStackingClassifier()
 
 
 @register("ai_fallback")

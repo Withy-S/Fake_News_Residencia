@@ -18,6 +18,7 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
   },
   "host_permissions": [
-    "https://news.google.com/*"
+    "https://news.google.com/*",
+    "http://127.0.0.1:8000/*"
   ]
 }

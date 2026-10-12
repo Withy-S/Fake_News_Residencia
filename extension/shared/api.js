@@ -1,5 +1,33 @@
 import { searchArticles, selectCoverage } from './news-search.js';
 
+// Backend local (RF10/RF11). Roda com `uvicorn app.main:app --reload` em backend/.
+const BACKEND_URL = 'http://127.0.0.1:8000';
+
+export async function analyzeText(data, signal) {
+  let response;
+  try {
+    response = await fetch(`${BACKEND_URL}/api/v1/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal,
+      body: JSON.stringify({
+        analysis_type: data.analysis_type,
+        text: data.text,
+        title: data.title || undefined,
+        url: data.url || undefined,
+      }),
+    });
+  } catch (error) {
+    if (error.name === 'AbortError') throw error;
+    throw new Error('O backend não está respondendo. Verifique se ele está rodando em localhost:8000.');
+  }
+  const body = await response.json();
+  if (!response.ok || body.status === 'error') {
+    throw new Error(body.error?.message || 'Não foi possível consultar a análise.');
+  }
+  return body;
+}
+
 export async function findRelatedNews(data, signal, onProgress = () => {}) {
   const found = await searchArticles(data, signal);
   if (!found.articles.length) return { sources: [], unavailable_publishers: found.unavailable_publishers };
