@@ -1,0 +1,8 @@
+apiVersion: 1
+
+providers:
+  - name: Fake News API
+    folder: ""
+    type: file
+    options:
+      path: /etc/grafana/dashboards
