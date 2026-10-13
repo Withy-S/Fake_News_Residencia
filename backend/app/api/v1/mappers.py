@@ -23,6 +23,7 @@ def to_response(result: AnalysisResult) -> AnalyzeResponse:
         status="ok",
         classification=result.classification,
         confidence=result.confidence,
+        fake_probability=result.fake_probability,
         method=result.method,
         justifications=result.justifications,
         indicators=[

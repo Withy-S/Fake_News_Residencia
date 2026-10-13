@@ -3,6 +3,7 @@ import { analyzeText, findRelatedNews } from "../shared/api.js";
 
 const get = (id) => document.getElementById(id);
 let searchController;
+let analysisController;
 let generation = 0;
 const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 42;
 
@@ -141,6 +142,8 @@ async function openResult(analysisType) {
     if (current === generation) {
       get("read-page").disabled = false;
       get("read-selection").disabled = false;
+      analysisController = undefined;
+      searchController = undefined;
     }
   }
 }

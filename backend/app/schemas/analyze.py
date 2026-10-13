@@ -44,6 +44,7 @@ class AnalyzeResponse(BaseModel):
     status: Literal["ok", "error"]
     classification: Classification | None = None
     confidence: float | None = Field(default=None, ge=0, le=1)
+    fake_probability: float | None = Field(default=None, ge=0, le=1)
     method: Method | None = None
     justifications: list[str] = []
     indicators: list[Indicator] = []

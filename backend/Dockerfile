@@ -15,6 +15,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY app ./app
+COPY models ./models
 
 RUN useradd --system --uid 10001 --no-create-home appuser
 USER appuser

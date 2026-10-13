@@ -34,6 +34,11 @@ def _linguistico(settings: Settings) -> LinguisticClassifier:
     return LinguisticClassifier()
 
 
+@register("stacking")
+def _stacking(settings: Settings) -> StackingClassifier:
+    return StackingClassifier(settings.stacking_model_path)
+
+
 @register("combinado", resilient=False)  # cada membro já tem o próprio timeout
 def _combinado(settings: Settings) -> EnsembleClassifier:
     members = {name: build(name, settings) for name in settings.ensemble_members}
