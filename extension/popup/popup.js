@@ -1,29 +1,29 @@
 import { captureActiveTab } from "../shared/page-context.js";
 import { findRelatedNews } from "../shared/api.js";
+import { analyzeText } from "../shared/analysis-api.js";
 
 const get = (id) => document.getElementById(id);
-let animationFrame;
 let searchController;
+let analysisController;
 let generation = 0;
-function animatePercentage() {
-  cancelAnimationFrame(animationFrame);
-  const percentElement = get("fake-percent");
-  let atual = 0;
-  let waveX = 0;
-  function frame() {
-    atual = Math.min(50, atual + 0.5);
-    waveX -= 1;
-    percentElement.textContent = `${Math.floor(atual)}%`;
-    percentElement.style.setProperty("--wave-x", `${waveX}px`);
-    percentElement.style.setProperty("--fill-y", `${30 - atual * 0.36}px`);
-    animationFrame = requestAnimationFrame(frame);
-  }
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    percentElement.textContent = "50%";
-    percentElement.style.setProperty("--fill-y", "12px");
-    return;
-  }
-  frame();
+
+function renderAnalysis(result) {
+  const percentage = Number.isFinite(result.fake_probability)
+    ? `${Math.round(result.fake_probability * 100)}%`
+    : "—";
+  const classifications = {
+    confiavel: "Fonte na lista confiável",
+    suspeito: "Suspeito",
+    nao_verificado: "Não verificado",
+  };
+  const methods = {
+    ml_model: "modelo de aprendizado de máquina",
+    ai_fallback: "análise complementar",
+    whitelist: "lista de fontes confiáveis",
+    analise_linguistica: "análise linguística",
+  };
+  get("fake-percent").textContent = percentage;
+  get("analysis-status").textContent = `Classificação: ${classifications[result.classification] || "Não verificado"}. Confiança: ${Math.round(result.confidence * 100)}%. Método: ${methods[result.method] || result.method}.`;
 }
 
 function renderSources(result) {
@@ -76,14 +76,37 @@ async function openResult(analysisType) {
     get("result-screen").hidden = false;
     get("result-title").focus();
     get("status").textContent = "";
-    animatePercentage();
-    const controller = new AbortController();
-    searchController = controller;
-    timeout = setTimeout(() => controller.abort(), 180_000);
-    const result = await findRelatedNews(data, controller.signal, message => {
+    get("fake-percent").textContent = "…";
+    get("analysis-status").textContent = "Analisando o texto no modelo local…";
+    analysisController = new AbortController();
+    searchController = new AbortController();
+    const analysisTimeout = setTimeout(() => analysisController.abort(), 30_000);
+    timeout = setTimeout(() => searchController.abort(), 180_000);
+    const analysisTask = analyzeText({ ...data, analysis_type: analysisType }, analysisController.signal)
+      .then(result => {
+        if (current === generation) renderAnalysis(result);
+      })
+      .catch(error => {
+        if (current === generation) {
+          get("fake-percent").textContent = "—";
+          get("analysis-status").textContent = error.name === "AbortError"
+            ? "A análise local demorou demais. Tente novamente."
+            : error.message || "Não foi possível consultar o modelo local.";
+        }
+      })
+      .finally(() => clearTimeout(analysisTimeout));
+    const sourcesTask = findRelatedNews(data, searchController.signal, message => {
       if (current === generation) get("search-status").textContent = message;
-    });
-    if (current === generation) renderSources(result);
+    })
+      .then(result => { if (current === generation) renderSources(result); })
+      .catch(error => {
+        if (current === generation) {
+          get("search-status").textContent = error.name === "AbortError"
+            ? "A busca demorou demais. Tente novamente."
+            : error.message || "Não foi possível consultar as notícias.";
+        }
+      });
+    await Promise.all([analysisTask, sourcesTask]);
   } catch (error) {
     if (current !== generation) return;
     const message = error.name === "AbortError"
@@ -95,6 +118,8 @@ async function openResult(analysisType) {
     if (current === generation) {
       get("read-page").disabled = false;
       get("read-selection").disabled = false;
+      analysisController = undefined;
+      searchController = undefined;
     }
   }
 }
@@ -104,7 +129,7 @@ get("read-selection").addEventListener("click", () => openResult("selecao"));
 get("back").addEventListener("click", () => {
   generation += 1;
   searchController?.abort();
-  cancelAnimationFrame(animationFrame);
+  analysisController?.abort();
   get("sources").replaceChildren();
   get("result-screen").hidden = true;
   get("home-screen").hidden = false;
