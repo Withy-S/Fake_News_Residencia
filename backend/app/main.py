@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.error_handlers import register_error_handlers
 from app.api.v1.router import api_router
@@ -16,6 +16,9 @@ def create_app() -> FastAPI:
     )
     app.include_router(api_router, prefix="/api/v1")
     register_error_handlers(app)
+    # RNF: observabilidade. Expõe /metrics (latência, status, contagem por rota)
+    # para o Prometheus coletar (ver docker-compose.yml e monitoring/).
+    Instrumentator().instrument(app).expose(app)
     return app
 
 

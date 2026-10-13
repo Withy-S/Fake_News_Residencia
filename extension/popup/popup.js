@@ -1,29 +1,72 @@
 import { captureActiveTab } from "../shared/page-context.js";
-import { findRelatedNews } from "../shared/api.js";
-import { analyzeText } from "../shared/analysis-api.js";
+import { analyzeText, findRelatedNews } from "../shared/api.js";
 
 const get = (id) => document.getElementById(id);
 let searchController;
 let analysisController;
 let generation = 0;
+const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 42;
 
-function renderAnalysis(result) {
-  const percentage = Number.isFinite(result.fake_probability)
-    ? `${Math.round(result.fake_probability * 100)}%`
-    : "—";
-  const classifications = {
-    confiavel: "Fonte na lista confiável",
-    suspeito: "Suspeito",
-    nao_verificado: "Não verificado",
-  };
-  const methods = {
-    ml_model: "modelo de aprendizado de máquina",
-    ai_fallback: "análise complementar",
-    whitelist: "lista de fontes confiáveis",
-    analise_linguistica: "análise linguística",
-  };
-  get("fake-percent").textContent = percentage;
-  get("analysis-status").textContent = `Classificação: ${classifications[result.classification] || "Não verificado"}. Confiança: ${Math.round(result.confidence * 100)}%. Método: ${methods[result.method] || result.method}.`;
+// RF12/RF14: como mostrar cada classificação e cada método ao usuário.
+const CLASSIFICATION_INFO = {
+  confiavel: { title: "Conteúdo possivelmente confiável", tone: "safe" },
+  suspeito: { title: "Conteúdo possivelmente suspeito", tone: "alert" },
+  nao_verificado: { title: "Não foi possível verificar", tone: "neutral" },
+};
+const METHOD_LABELS = {
+  whitelist: "FONTE CONFIÁVEL",
+  ml_model: "MODELO DE ML",
+  ai_fallback: "ANÁLISE COMPLEMENTAR",
+  analise_linguistica: "ANÁLISE LINGUÍSTICA",
+};
+
+function setGauge(percent, tone) {
+  // className é só leitura em elementos SVG (<svg>/<circle>): precisa usar classList.
+  const svg = get("gauge-svg");
+  const progress = get("gauge-progress");
+  const percentElement = get("fake-percent");
+  svg.classList.toggle("gauge__svg--safe", tone === "safe");
+  svg.classList.toggle("gauge__svg--neutral", tone === "neutral");
+  progress.classList.toggle("gauge__progress--safe", tone === "safe");
+  progress.classList.toggle("gauge__progress--neutral", tone === "neutral");
+  percentElement.className = `gauge__percent${tone === "alert" ? "" : ` gauge__percent--${tone}`}`;
+  progress.style.setProperty("stroke-dashoffset", `${GAUGE_CIRCUMFERENCE * (1 - percent / 100)}`);
+  percentElement.textContent = `${Math.round(percent)}%`;
+}
+
+function renderAnalyzing() {
+  get("result-title").textContent = "Analisando…";
+  get("verdict-tag").hidden = true;
+  get("verdict-detail").textContent = "Consultando o modelo de Machine Learning…";
+  setGauge(0, "neutral");
+}
+
+function renderVerdict(result) {
+  if (!result.classification) {
+    renderVerdictError(new Error(result.error?.message || "Não foi possível analisar o conteúdo."));
+    return;
+  }
+  const info = CLASSIFICATION_INFO[result.classification] ?? CLASSIFICATION_INFO.nao_verificado;
+  const confidence = result.confidence ?? 0;
+  const fakePercent = result.classification === "suspeito" ? confidence * 100
+    : result.classification === "confiavel" ? (1 - confidence) * 100
+    : 50;
+  setGauge(fakePercent, info.tone);
+  get("result-title").textContent = info.title;
+  const methodLabel = METHOD_LABELS[result.method];
+  get("verdict-tag").hidden = !methodLabel;
+  get("verdict-tag").textContent = methodLabel ?? "";
+  get("verdict-tag").className = `tag${info.tone === "alert" ? "" : ` tag--${info.tone}`}`;
+  get("verdict-detail").textContent = result.justifications.length
+    ? result.justifications.join(" ")
+    : `Confiança do modelo: ${Math.round(confidence * 100)}%.`;
+}
+
+function renderVerdictError(error) {
+  setGauge(0, "neutral");
+  get("result-title").textContent = "Análise indisponível";
+  get("verdict-tag").hidden = true;
+  get("verdict-detail").textContent = error?.message || "Não foi possível consultar a análise.";
 }
 
 function renderSources(result) {
@@ -76,37 +119,18 @@ async function openResult(analysisType) {
     get("result-screen").hidden = false;
     get("result-title").focus();
     get("status").textContent = "";
-    get("fake-percent").textContent = "…";
-    get("analysis-status").textContent = "Analisando o texto no modelo local…";
-    analysisController = new AbortController();
-    searchController = new AbortController();
-    const analysisTimeout = setTimeout(() => analysisController.abort(), 30_000);
-    timeout = setTimeout(() => searchController.abort(), 180_000);
-    const analysisTask = analyzeText({ ...data, analysis_type: analysisType }, analysisController.signal)
-      .then(result => {
-        if (current === generation) renderAnalysis(result);
-      })
-      .catch(error => {
-        if (current === generation) {
-          get("fake-percent").textContent = "—";
-          get("analysis-status").textContent = error.name === "AbortError"
-            ? "A análise local demorou demais. Tente novamente."
-            : error.message || "Não foi possível consultar o modelo local.";
-        }
-      })
-      .finally(() => clearTimeout(analysisTimeout));
-    const sourcesTask = findRelatedNews(data, searchController.signal, message => {
+    renderAnalyzing();
+    const controller = new AbortController();
+    searchController = controller;
+    timeout = setTimeout(() => controller.abort(), 180_000);
+    const analysis = analyzeText(data, controller.signal)
+      .then(result => { if (current === generation) renderVerdict(result); })
+      .catch(error => { if (current === generation) renderVerdictError(error); });
+    const result = await findRelatedNews(data, controller.signal, message => {
       if (current === generation) get("search-status").textContent = message;
-    })
-      .then(result => { if (current === generation) renderSources(result); })
-      .catch(error => {
-        if (current === generation) {
-          get("search-status").textContent = error.name === "AbortError"
-            ? "A busca demorou demais. Tente novamente."
-            : error.message || "Não foi possível consultar as notícias.";
-        }
-      });
-    await Promise.all([analysisTask, sourcesTask]);
+    });
+    if (current === generation) renderSources(result);
+    await analysis;
   } catch (error) {
     if (current !== generation) return;
     const message = error.name === "AbortError"
@@ -129,7 +153,6 @@ get("read-selection").addEventListener("click", () => openResult("selecao"));
 get("back").addEventListener("click", () => {
   generation += 1;
   searchController?.abort();
-  analysisController?.abort();
   get("sources").replaceChildren();
   get("result-screen").hidden = true;
   get("home-screen").hidden = false;
