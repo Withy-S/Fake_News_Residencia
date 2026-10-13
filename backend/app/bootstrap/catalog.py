@@ -7,6 +7,7 @@ from app.adapters.classifiers import PlaceholderClassifier, UnavailableFallback
 from app.adapters.ensemble import EnsembleClassifier
 from app.adapters.heuristic import LinguisticClassifier
 from app.adapters.ml_classifier import MLStackingClassifier
+from app.adapters.stacking_classifier import StackingClassifier
 from app.bootstrap.registry import build, register
 from app.core.config import Settings
 
