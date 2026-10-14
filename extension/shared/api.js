@@ -4,6 +4,12 @@ import { searchArticles, selectCoverage } from './news-search.js';
 const BACKEND_URL = 'http://127.0.0.1:8000';
 
 export async function analyzeText(data, signal) {
+  if (typeof data.text !== 'string' || data.text.length < 20) {
+    throw new Error('Envie pelo menos 20 caracteres para análise.');
+  }
+  if (data.text.length > 20_000) {
+    throw new Error('O texto da página excede o limite de 20.000 caracteres da API.');
+  }
   let response;
   try {
     response = await fetch(`${BACKEND_URL}/api/v1/analyze`, {
@@ -24,6 +30,10 @@ export async function analyzeText(data, signal) {
   const body = await response.json();
   if (!response.ok || body.status === 'error') {
     throw new Error(body.error?.message || 'Não foi possível consultar a análise.');
+  }
+  if (body.fake_probability !== null && body.fake_probability !== undefined &&
+      (!Number.isFinite(body.fake_probability) || body.fake_probability < 0 || body.fake_probability > 1)) {
+    throw new Error('A API retornou uma probabilidade inválida.');
   }
   return body;
 }
