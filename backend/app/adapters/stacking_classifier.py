@@ -87,9 +87,9 @@ class StackingClassifier:
                     "É uma estimativa automática, não uma verificação factual."
                 ),
                 (
-                    "AVISO: no teste externo Fake.br, cerca de 26,2% das notícias Reais foram "
-                    "classificadas como suspeitas no limiar 0,5 (entrada limitada a 100 palavras). "
-                    "O score pode falhar em fontes diferentes; use apenas como triagem humana."
+                    "AVISO: no Fake.br completo, 20,1% das notícias Reais foram classificadas "
+                    "como suspeitas no limiar 0,5. O modelo tem falsos positivos em fontes externas; "
+                    "use apenas como triagem humana, não como veredito."
                 ),
             ],
         )
