@@ -7,23 +7,11 @@
     "activeTab",
     "scripting"
   ],
-  "icons": {
-    "16": "icon/icon_fakenils.jpg",
-    "32": "icon/icon_fakenils.jpg",
-    "48": "icon/icon_fakenils.jpg",
-    "128": "icon/icon_fakenils.jpg"
-  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "action": {
-    "default_icon": {
-    "16": "icon/icon_fakenils.jpg",
-    "32": "icon/icon_fakenils.jpg",
-    "48": "icon/icon_fakenils.jpg",
-    "128": "icon/icon_fakenils.jpg"
-  },
     "default_popup": "popup/popup.html"
   },
   "content_security_policy": {
