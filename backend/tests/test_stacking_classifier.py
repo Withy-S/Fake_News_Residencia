@@ -22,10 +22,10 @@ def test_stacking_carrega_artefato_e_retorna_probabilidade_fake():
     assert result.justifications
 
 
-def test_stacking_usa_preprocessamento_do_modelo():
+def test_stacking_normaliza_sem_truncar_texto():
     classifier = StackingClassifier("models/stacking.joblib")
     text = "\ufeffNOTICIA none " + "PALAVRA " * 105
-    prepared_text = "noticia " + "palavra " * 99
+    prepared_text = "noticia " + "palavra " * 105
 
     probabilities = [
         float(model.predict_proba([prepared_text])[0, list(model.classes_).index(1)])

@@ -21,14 +21,16 @@ O artefato `backend/models/stacking.joblib` foi atualizado com os cinco modelos
 retreinados em `challenge2v2` (baseline, SVM, Naive Bayes, n-gramas de caracteres
 e GBM). O treino usa a base FakeRecogna 2.0 extrativa casada por tamanho:
 17.648 textos no total, com 14.119 no desenvolvimento e 3.529 reservados fora do
-ajuste. O backend aplica o mesmo pré-processamento da inferência de origem:
-minúsculas, remoção do artefato `none`, normalização de espaços e corte nas
-primeiras 100 palavras.
+ajuste. O backend normaliza o texto para minúsculas, remove o artefato `none` e
+normaliza espaços, sem truncar a notícia.
 
 Na validação interna agrupada por URL, o stacking obteve AUC 0,9855. No teste
-externo Fake.br (7.200 textos), sua AUC foi 0,7388; o SVM individual chegou a
-0,7681. A queda externa indica generalização limitada para outras fontes. Use o
-resultado apenas como sinal de triagem, nunca como veredito factual automático.
+externo Fake.br (7.200 textos, limitados às primeiras 100 palavras), sua AUC foi
+0,7388; o SVM individual chegou a 0,7681. Como a inferência da aplicação usa o
+texto completo, essa métrica externa não representa exatamente o comportamento
+com notícias longas. A queda externa indica generalização limitada para outras
+fontes. Use o resultado apenas como sinal de triagem, nunca como veredito factual
+automático.
 
 ## O que o projeto faz
 

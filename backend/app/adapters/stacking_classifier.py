@@ -12,15 +12,13 @@ from app.domain.models import ClassifierResult
 
 _NONE = re.compile(r"\bnone\b", re.IGNORECASE)
 _WHITESPACE = re.compile(r"\s+")
-_MAX_WORDS = 100
-_PREPROCESSING = "lowercase; remove none; collapse whitespace; first 100 words"
+_PREPROCESSING = "lowercase; remove none; collapse whitespace; full text"
 
 
 def _prepare_text(text: str) -> str:
     normalized = str(text).replace("\ufeff", " ").lower()
     normalized = _NONE.sub(" ", normalized)
-    normalized = _WHITESPACE.sub(" ", normalized).strip()
-    return " ".join(normalized.split()[:_MAX_WORDS])
+    return _WHITESPACE.sub(" ", normalized).strip()
 
 
 class StackingClassifier:
