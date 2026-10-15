@@ -7,8 +7,8 @@
   --cor-texto-fraco: #8b90a0;
   --cor-alerta: #ff2d55;
   --cor-alerta-forte: #ff4d6d;
-  --cor-seguro: #00e5ff;
-  --cor-seguro-forte: #6df0ff;
+  --cor-seguro: #ffd60a;
+  --cor-seguro-forte: #ffe873;
   --fonte-destaque: 'Chakra Petch', sans-serif;
   --fonte-tech: 'Share Tech Mono', monospace;
   --fonte-texto: 'Inter', sans-serif;
@@ -35,8 +35,8 @@ body::before {
   pointer-events: none;
   background-size: 26px 26px;
   background-image:
-    linear-gradient(to right, rgba(0, 229, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 214, 10, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 214, 10, 0.05) 1px, transparent 1px);
 }
 
 body::after {
@@ -47,7 +47,7 @@ body::after {
   pointer-events: none;
   background:
     radial-gradient(ellipse at 0% 0%, rgba(255, 45, 85, 0.12), transparent 55%),
-    radial-gradient(ellipse at 100% 100%, rgba(0, 229, 255, 0.1), transparent 55%);
+    radial-gradient(ellipse at 100% 100%, rgba(255, 214, 10, 0.1), transparent 55%);
 }
 
 .hud {
@@ -202,7 +202,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
   border: 1px solid rgba(255, 45, 85, 0.5);
 }
 
-.tag--safe { color: var(--cor-seguro-forte); background: rgba(0, 229, 255, 0.1); border-color: rgba(0, 229, 255, 0.5); }
+.tag--safe { color: var(--cor-seguro-forte); background: rgba(255, 214, 10, 0.1); border-color: rgba(255, 214, 10, 0.5); }
 .tag--neutral { color: var(--cor-texto-fraco); background: rgba(139, 144, 160, 0.1); border-color: var(--cor-borda); }
 
 #status, #search-status { font-size: 12px; line-height: 1.5; color: var(--cor-texto-fraco); }
@@ -214,7 +214,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 .gauge { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
 
 .gauge__svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 8px rgba(255, 45, 85, 0.5)); transition: filter 0.2s ease; }
-.gauge__svg--safe { filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.45)); }
+.gauge__svg--safe { filter: drop-shadow(0 0 8px rgba(255, 214, 10, 0.45)); }
 .gauge__svg--neutral { filter: none; }
 .gauge__track { fill: none; stroke: var(--cor-painel-alt); stroke-width: 8; }
 .gauge__progress {
