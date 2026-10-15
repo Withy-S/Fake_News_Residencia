@@ -69,12 +69,6 @@ class StackingClassifier:
                 (
                     f"O modelo estimou {fake_probability:.1%} de probabilidade para a classe Fake. "
                     "É uma estimativa automática, não uma verificação factual."
-                ),
-                (
-                    "AVISO: o texto de treino do FakeRecogna passou por um pré-processamento "
-                    "(lematização) que ainda não foi replicado aqui para o texto de entrada. "
-                    "O percentual pode não ser confiável para texto real da web até isso ser "
-                    "corrigido (ver ml/README.md)."
-                ),
+                )
             ],
         )
