@@ -87,10 +87,9 @@ class StackingClassifier:
                     "É uma estimativa automática, não uma verificação factual."
                 ),
                 (
-                    "AVISO: o texto de treino do FakeRecogna passou por um pré-processamento "
-                    "(lematização) que ainda não foi replicado aqui para o texto de entrada. "
-                    "O percentual pode não ser confiável para texto real da web até isso ser "
-                    "corrigido (ver ml/README.md)."
+                    "AVISO: no teste externo Fake.br, cerca de 26,2% das notícias Reais foram "
+                    "classificadas como suspeitas no limiar 0,5 (entrada limitada a 100 palavras). "
+                    "O score pode falhar em fontes diferentes; use apenas como triagem humana."
                 ),
             ],
         )

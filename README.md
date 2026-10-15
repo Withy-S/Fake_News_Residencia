@@ -28,9 +28,10 @@ Na validação interna agrupada por URL, o stacking obteve AUC 0,9855. No teste
 externo Fake.br (7.200 textos, limitados às primeiras 100 palavras), sua AUC foi
 0,7388; o SVM individual chegou a 0,7681. Como a inferência da aplicação usa o
 texto completo, essa métrica externa não representa exatamente o comportamento
-com notícias longas. A queda externa indica generalização limitada para outras
-fontes. Use o resultado apenas como sinal de triagem, nunca como veredito factual
-automático.
+com notícias longas. No limiar 0,5, cerca de 26,2% dos textos Reais desse teste
+foram classificados como suspeitos. A queda externa indica generalização limitada
+para outras fontes. Use o resultado apenas como sinal de triagem, nunca como
+veredito factual automático.
 
 ## O que o projeto faz
 
