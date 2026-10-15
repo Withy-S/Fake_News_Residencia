@@ -28,17 +28,13 @@ BERTopic do vetor original — os pesos mudam quando se re-ajusta sem ele).
 
 ## Dataset
 
-O dataset **não está neste repositório** (datasets não vão para o git). É o
-**FakeRecogna** (notícias em português rotuladas Fake/Real), já tratado e
-deduplicado pelo time de dados: `NoRemovalWords_tratada_dedup.csv` (11.670 linhas,
-colunas `Titulo`, `Noticia`, `Rotulo`, entre outras). Peça o arquivo a quem fez o
-desafio de ML e informe o caminho local com `--dataset-csv`.
+Os datasets **não estão neste repositório**. O modelo atual usa a **FakeRecogna 2.0** (Hugging Face,
+`recogna-nlp`, variante extrativa: texto natural, em minúsculas, sem lematização) e o **Fake.br**,
+tratados no repositório do desafio de ML. Os modelos salvos de lá viram o pacote do backend com
+`ml/empacotar_stacking.py`.
 
-**Importante**: os modelos usam **somente a coluna `Noticia`**. Uma auditoria de
-vazamento de rótulo mostrou que `Titulo` traz o veredito escrito em ~64% das
-notícias Fake (ex.: "É #FAKE: ...", "...#boato") — usar o título inflaria
-artificialmente as métricas. Nenhuma outra coluna (`Categoria`, `Dominio`, `URL`,
-`Autor`, `Data`, features estruturais etc.) é usada.
+**Importante**: os modelos usam **somente a coluna `Noticia`**. O `Titulo` traz o veredito escrito
+em ~64% das notícias Fake (ex.: "É #FAKE: ...") e inflaria as métricas.
 
 ## Decisão do modelo (resumo, protocolo original com os 6)
 
@@ -75,7 +71,9 @@ carregado por `backend/app/adapters/stacking_classifier.py::StackingClassifier`:
 | `sklearn_version`, `python_version` | gravados no treino; o `StackingClassifier` **recusa carregar** se não baterem com o ambiente de execução (evita o tipo de quebra silenciosa que o BERTopic teve) |
 | `training_rows`, `training_split` | proveniência do treino |
 
-## Como treinar/re-exportar
+## Como treinar/re-exportar (modelo ANTIGO, FakeRecogna 1)
+
+> Mantido por histórico. Para o modelo atual use `ml/empacotar_stacking.py` (seção abaixo).
 
 ```bash
 cd ml
@@ -87,34 +85,36 @@ python treinar_e_exportar_stacking.py --dataset-csv /caminho/para/NoRemovalWords
 Treina os 5 modelos clássicos (rápido, segundos a poucos minutos) e grava o
 pacote em `backend/models/stacking.joblib`, no formato acima.
 
-## ⚠️ Limitação conhecida: pré-processamento do texto de entrada (2026-10-12)
+## Modelo em produção (atualizado em 2026-10-15)
 
-A coluna `Noticia` do FakeRecogna **já vem lematizada/normalizada na fonte**
-(ex.: "saúde" → "saudar", "fila" → "filar", "multa" → "multar", artigos
-("a"/"as"/"os"/"um"...) colapsados para "o"). Os modelos foram treinados em
-cima dessa forma, não em texto natural.
+`backend/models/stacking.joblib` vem do desafio de ML: FakeRecogna 2.0 extrativa casada por
+tamanho **mais metade dos pares do Fake.br** (`modelos/avaliar_externo.py --salvar
+--treino-externo 0.5` no repositório do desafio). O pacote é gerado por:
 
-O `StackingClassifier` hoje recebe o texto **da forma como a extensão captura
-da página, sem nenhum pré-processamento**. Isso causa uma incompatibilidade de
-vocabulário: testei a API com texto real (neutro e até notícia formal de saúde)
-e o modelo deu "suspeito" com 56-99% de confiança de forma sistemática — mas,
-ao mandar uma linha do próprio dataset (já na forma lematizada, rótulo
-conhecido), ele acertou os dois casos (Real→fake_probability 6%, Fake→98%).
-Confirmei que **isso acontece igual nas duas integrações independentes**
-(a de 6 modelos e a de 5) — não é bug de implementação, é a mesma incompatibilidade
-de vocabulário nos dois casos. Ou seja: **o modelo e os pesos estão corretos**,
-falta só replicar o pré-processamento de texto que gerou a coluna `Noticia`
-antes de chamar o classificador em produção.
+```bash
+python ml/empacotar_stacking.py --origem /caminho/modelos_salvos/FakeRecogna2_extrativa_casada_com_fakebr
+```
 
-Tentei aproximar com spaCy (`pt_core_news_sm` e `pt_core_news_lg`) e com o
-stemmer RSLP do NLTK — nenhum dos dois reproduz o padrão observado (substantivos
-virando verbo cognato: saúde→saudar, fila→filar, deputado→deputar). Isso não é
-lematização nem stemming padrão; é algo customizado. **Quem souber qual
-ferramenta/script gerou `FakeRecogna_no_removal_words.xlsx` original precisa
-confirmar** — a resposta certa provavelmente está com quem montou essa base
-antes da limpeza (`tratamento/rodar_limpeza.py` não faz essa transformação,
-ela já vem pronta no xlsx de origem).
+Rode com o **mesmo Python e scikit-learn do backend**: o `StackingClassifier` recusa carregar se
+divergirem, ou se `input_preprocessing` do pacote não for o que o backend aplica (minúsculas,
+remoção do `none`, espaços normalizados, texto completo).
 
-Até isso ser resolvido, trate o percentual do `stacking` como não confiável
-para texto real da web (a API já inclui esse aviso nas `justifications` da
-resposta).
+### Falsos positivos e a correção
+
+O modelo treinado só na FakeRecogna dava "suspeito" com probabilidade alta para notícias reais: o
+Real do treino é quase só de 2020-2021 sobre covid, e o modelo aprendeu época e tema. No Fake.br,
+26% dos Reais saíam como Fake com limiar 0,5.
+
+Correções: (1) metade dos pares do Fake.br entra no treino; (2) o backend usa três faixas, não o
+limiar único: Real (p < 0,3), Incerto (0,3 a 0,7) e Fake (p >= 0,7). Só Fake vira `suspeito`;
+Real e Incerto viram `nao_verificado`, e o Incerto traz a justificativa de revisão humana.
+
+### Desempenho esperado
+
+Nos pares de teste do Fake.br (não vistos no treino): AUC 0,961; 4,9% dos Reais como Fake, 81% dos
+Fake detectados, ~14% em Incerto. Esse teste não é independente (pares das mesmas fontes) e, fora
+do diariodobrasil.org, tem só 141 Fake. **Em fontes e épocas novas, espere pior.** Sem truncar o
+texto, o resultado no Fake.br foi igual ou ligeiramente melhor que com corte em 100 palavras (Reais
+como Fake: 1,9% contra 2,4%, em todo o conjunto, que inclui a metade vista no treino).
+
+O treino só viu textos de ~50 a 190 palavras.

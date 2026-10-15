@@ -4,25 +4,11 @@ import pytest
 from app.adapters.stacking_classifier import StackingClassifier
 from app.domain.enums import Classification, Method
 
-# Amostras retiradas de dados_tratados/NoRemovalWords_tratada_dedup.csv (rótulo
-# conhecido), já na forma lematizada que o FakeRecogna usa nativamente na coluna
-# `Noticia` (ver "Limitação conhecida" em ml/README.md). Propositalmente NÃO é
-# português natural: isso testa o modelo e os artefatos isolados do problema de
-# pré-processamento do texto de entrada, que é um bug diferente e já documentado.
-AMOSTRA_REAL_DATASET = (
-    "dia noite acessório passar o código vestimenta pessoa mundo e d tênis chunky "
-    "o bermuda ciclista permitir divisão acalorar opinião máscara chegar ficar e "
-    "haver o tendência durar goste-se aliar importante prevenção o o coronavírus "
-    "e obrigatório país chegar máscara centrar polêmicas o envolver o marcar "
-    "osklen vender o item o o preço r$ o unidade e execrar redar social eua o "
-    "empresário kim kardashian"
-)
-AMOSTRA_FAKE_DATASET = (
-    "sucessivo falhar umar d atribuir diretamente o o gol santo vencer o vasco x "
-    "o goleiro sidão acabar escolher popularmente e ironicamente comer o craque o "
-    "término jogar umar repórter tv globo entregar troféu “ craque jogar ” o o "
-    "goleiro visivelmente constranger conferir o abaixar"
-)
+# Amostras em português natural, tiradas do Fake.br (rótulo conhecido). O modelo foi treinado
+# também com metade dos pares do Fake.br; estes testes verificam o artefato e a integração,
+# não a capacidade de generalizar para fontes novas.
+AMOSTRA_REAL = 'temer diz estar aberto ao diálogo com parlamentares para aprovar reforma da previdência. em entrevista à tv bandeirantes, o presidente michel temer admitiu que aceitaria outras modificações ao projeto formatado pelo governo federal para que o texto seja aprovado no congresso.. o presidente michel temer afirmou, em entrevista à tv bandeirantes transmitida na noite desta terça-feira (6), que o governo está aberto ao diálogo para conseguir aprovar a reforma da previdência neste mês. "o governo está aberto ao diálogo e evidentemente os parlamentares estão abertos ao diálogo", afirmou ele. "nesse projeto que está formatado agora, a economia é entre r$'
+AMOSTRA_FAKE = 'peixe morre pela boca: "se continuarem as delações, nenhum de nós escapa". . lula sendo lula: "eu quero que qualquer pessoa que tenha roubado seja preso [...] é importante deixar claro [...] mais eu quero que toda e qualquer pessoa, do mais pobre ao mais rico tenha um julgamento tenha um julgamento democrático. ninguém pode ser preso por uma delação premiada, porque se isso continuar nenhum de nós escapa" em março deste ano, lula já havia deixado escapar outra besteira ... quando discursava em um congresso de professores em serra negra ( sp ) na época, ele disse que o'
 
 
 @pytest.fixture(scope="module")
@@ -30,14 +16,29 @@ def classificador():
     return StackingClassifier("models/stacking.joblib")
 
 
-def test_acerta_amostra_real_do_proprio_dataset_de_treino(classificador):
-    resultado = classificador.classify(AMOSTRA_REAL_DATASET)
+def test_acerta_amostra_real_em_portugues_natural(classificador):
+    resultado = classificador.classify(AMOSTRA_REAL)
+    assert resultado.fake_probability < 0.3
     assert resultado.classification != Classification.SUSPICIOUS
 
 
-def test_acerta_amostra_fake_do_proprio_dataset_de_treino(classificador):
-    resultado = classificador.classify(AMOSTRA_FAKE_DATASET)
+def test_acerta_amostra_fake_em_portugues_natural(classificador):
+    resultado = classificador.classify(AMOSTRA_FAKE)
     assert resultado.classification == Classification.SUSPICIOUS
+    assert resultado.fake_probability >= 0.7
+
+
+def test_faixa_de_incerteza_nao_e_suspeito(classificador, monkeypatch):
+    class MetaFixo:
+        classes_ = np.array([0, 1])
+
+        def predict_proba(self, _):
+            return np.array([[0.5, 0.5]])
+
+    monkeypatch.setattr(classificador, "meta_model", MetaFixo())
+    resultado = classificador.classify(AMOSTRA_REAL)
+    assert resultado.classification == Classification.UNVERIFIED
+    assert any("incerteza" in j for j in resultado.justifications)
 
 
 def test_stacking_carrega_artefato_e_retorna_probabilidade_fake():

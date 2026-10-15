@@ -24,13 +24,13 @@ e GBM). O treino usa a base FakeRecogna 2.0 extrativa casada por tamanho:
 ajuste. O backend normaliza o texto para minúsculas, remove o artefato `none` e
 normaliza espaços, sem truncar a notícia.
 
-Na validação interna agrupada por URL, o stacking obteve AUC 0,9855. No teste
-externo Fake.br (7.200 textos, limitados às primeiras 100 palavras), sua AUC foi
-0,7388; o SVM individual chegou a 0,7681. Como a inferência da aplicação usa o
-texto completo, essa métrica externa não representa exatamente o comportamento
-com notícias longas. A queda externa indica generalização limitada para outras
-fontes. Use o resultado apenas como sinal de triagem, nunca como veredito factual
-automático.
+O treino inclui também metade dos pares do Fake.br, para reduzir falsos positivos (notícias reais
+classificadas como Fake). O backend usa três faixas: Real (p < 0,3), Incerto e Fake (p >= 0,7); só
+Fake vira "suspeito". Nos pares de teste do Fake.br o stacking obteve AUC 0,961, com 4,9% dos
+Reais como Fake e 81% dos Fake detectados. O teste não é independente (pares das mesmas fontes);
+em fontes novas o desempenho é pior. Na validação interna agrupada por URL, a AUC foi 0,9855.
+Use o resultado apenas como sinal de triagem, nunca como veredito factual automático. Detalhes em
+[ml/README.md](ml/README.md).
 
 ## O que o projeto faz
 

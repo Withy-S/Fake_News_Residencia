@@ -14,6 +14,12 @@ _NONE = re.compile(r"\bnone\b", re.IGNORECASE)
 _WHITESPACE = re.compile(r"\s+")
 _PREPROCESSING = "lowercase; remove none; collapse whitespace; full text"
 
+# Três faixas em vez do limiar único de 0,5: abaixo de REAL_BELOW é Real, a partir de
+# FAKE_FROM é Fake e, no meio, o modelo não é confiável. Com o limiar de 0,5, o modelo
+# treinado só na FakeRecogna classificava 26% das notícias Reais do Fake.br como Fake.
+REAL_BELOW = 0.3
+FAKE_FROM = 0.7
+
 
 def _prepare_text(text: str) -> str:
     normalized = str(text).replace("\ufeff", " ").lower()
@@ -73,24 +79,28 @@ class StackingClassifier:
         confidence = max(fake_probability, 1 - fake_probability)
         classification = (
             Classification.SUSPICIOUS
-            if fake_probability >= 0.5
+            if fake_probability >= FAKE_FROM
             else Classification.UNVERIFIED
+        )
+        justifications = [
+            (
+                f"O modelo estimou {fake_probability:.1%} de probabilidade para a classe Fake. "
+                "É uma estimativa automática, não uma verificação factual."
+            )
+        ]
+        if REAL_BELOW <= fake_probability < FAKE_FROM:
+            justifications.append(
+                "A estimativa ficou na faixa de incerteza do modelo; "
+                "o resultado deve ser revisado por uma pessoa."
+            )
+        justifications.append(
+            "O modelo foi treinado com notícias de poucas fontes e épocas; em fontes "
+            "novas o desempenho tende a ser pior (ver ml/README.md)."
         )
         return ClassifierResult(
             classification=classification,
             confidence=confidence,
             method=Method.ML_MODEL,
             fake_probability=fake_probability,
-            justifications=[
-                (
-                    f"O modelo estimou {fake_probability:.1%} de probabilidade para a classe Fake. "
-                    "É uma estimativa automática, não uma verificação factual."
-                ),
-                (
-                    "AVISO: o texto de treino do FakeRecogna passou por um pré-processamento "
-                    "(lematização) que ainda não foi replicado aqui para o texto de entrada. "
-                    "O percentual pode não ser confiável para texto real da web até isso ser "
-                    "corrigido (ver ml/README.md)."
-                ),
-            ],
+            justifications=justifications,
         )
