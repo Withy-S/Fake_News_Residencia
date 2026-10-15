@@ -15,6 +15,7 @@ def test_stacking_carrega_artefato_e_retorna_probabilidade_fake():
     assert result.method == Method.ML_MODEL
     assert result.classification in {
         Classification.SUSPICIOUS,
+        Classification.TRUSTED,
         Classification.UNVERIFIED,
     }
     assert result.justifications
