@@ -1,5 +1,6 @@
 # Dependências de TREINO (ml/treinar_e_exportar_stacking.py), além das que o backend já
-# traz em produção (backend/requirements.txt): scikit-learn, joblib, numpy, scipy.
+# traz em produção (backend/requirements.txt): scikit-learn, joblib, numpy, scipy,
+# bertopic, umap-learn, hdbscan, sentence-transformers.
 #
 # pandas só é usada aqui para ler o CSV do dataset; o backend em produção nunca lê o
 # dataset bruto, então pandas não entra no requirements.txt do backend.

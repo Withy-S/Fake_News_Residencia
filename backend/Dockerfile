@@ -4,7 +4,10 @@ FROM python:${PYTHON_VERSION}-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    HOME=/tmp \
+    NUMBA_CACHE_DIR=/tmp/numba_cache \
+    HF_HOME=/tmp/hf_cache
 
 WORKDIR /srv
 
