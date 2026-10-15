@@ -1,3 +1,5 @@
+import numpy as np
+
 from app.adapters.stacking_classifier import StackingClassifier
 from app.domain.enums import Classification, Method
 
@@ -18,3 +20,21 @@ def test_stacking_carrega_artefato_e_retorna_probabilidade_fake():
         Classification.UNVERIFIED,
     }
     assert result.justifications
+
+
+def test_stacking_usa_preprocessamento_do_modelo():
+    classifier = StackingClassifier("models/stacking.joblib")
+    text = "\ufeffNOTICIA none " + "PALAVRA " * 105
+    prepared_text = "noticia " + "palavra " * 99
+
+    probabilities = [
+        float(model.predict_proba([prepared_text])[0, list(model.classes_).index(1)])
+        for model in (classifier.models[name] for name in classifier.base_models)
+    ]
+    clipped = np.clip(probabilities, 1e-4, 1 - 1e-4)
+    logits = np.log(clipped / (1 - clipped)).reshape(1, -1)
+    expected = classifier.meta_model.predict_proba(logits)[0, 1]
+
+    result = classifier.classify(text)
+
+    assert np.isclose(result.fake_probability, expected)

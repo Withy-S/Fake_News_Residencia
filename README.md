@@ -9,9 +9,24 @@ Extensão de navegador (Chrome) que ajuda o usuário a avaliar a confiabilidade 
 | Componente | Estado |
 |---|---|
 | Back-end: API `/health` e `/analyze` | disponível localmente |
-| Modelo de Machine Learning | stacking integrado localmente |
+| Modelo de Machine Learning | stacking retreinado integrado localmente |
 | Análise complementar por IA (fallback) | a fazer |
 | Extensão: análise via API local | disponível para teste |
+
+## Modelo integrado
+
+O artefato `backend/models/stacking.joblib` foi atualizado com os cinco modelos
+retreinados em `challenge2v2` (baseline, SVM, Naive Bayes, n-gramas de caracteres
+e GBM). O treino usa a base FakeRecogna 2.0 extrativa casada por tamanho:
+17.648 textos no total, com 14.119 no desenvolvimento e 3.529 reservados fora do
+ajuste. O backend aplica o mesmo pré-processamento da inferência de origem:
+minúsculas, remoção do artefato `none`, normalização de espaços e corte nas
+primeiras 100 palavras.
+
+Na validação interna agrupada por URL, o stacking obteve AUC 0,9855. No teste
+externo Fake.br (7.200 textos), sua AUC foi 0,7388; o SVM individual chegou a
+0,7681. A queda externa indica generalização limitada para outras fontes. Use o
+resultado apenas como sinal de triagem, nunca como veredito factual automático.
 
 ## O que o projeto faz
 
@@ -46,9 +61,8 @@ Conteúdo sem evidência suficiente é classificado como **não verificado**, e 
 
 ```
 .
-├── backend/      API em Python (FastAPI)
+├── backend/      API em Python (FastAPI) e artefato do modelo
 ├── extension/    Extensão do navegador
-├── ml/           Modelos de Machine Learning (ainda a treinar)
 ├── docs/         Documentação e requisitos
 └── .github/      Templates de issue e de pull request
 ```

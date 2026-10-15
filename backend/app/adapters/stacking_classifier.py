@@ -1,3 +1,4 @@
+import re
 import sys
 from pathlib import Path
 
@@ -8,6 +9,18 @@ import sklearn
 from app.domain.enums import Classification, Method
 from app.domain.errors import AnalysisUnavailableError
 from app.domain.models import ClassifierResult
+
+_NONE = re.compile(r"\bnone\b", re.IGNORECASE)
+_WHITESPACE = re.compile(r"\s+")
+_MAX_WORDS = 100
+_PREPROCESSING = "lowercase; remove none; collapse whitespace; first 100 words"
+
+
+def _prepare_text(text: str) -> str:
+    normalized = str(text).replace("\ufeff", " ").lower()
+    normalized = _NONE.sub(" ", normalized)
+    normalized = _WHITESPACE.sub(" ", normalized).strip()
+    return " ".join(normalized.split()[:_MAX_WORDS])
 
 
 class StackingClassifier:
@@ -22,6 +35,10 @@ class StackingClassifier:
         if package.get("version") != 1 or package.get("input") != "noticia":
             raise ValueError(
                 "Formato ou modo de entrada incompatível no artefato do stacking."
+            )
+        if package.get("input_preprocessing") != _PREPROCESSING:
+            raise ValueError(
+                "Pré-processamento incompatível no artefato do stacking."
             )
         if package.get("sklearn_version") != sklearn.__version__:
             raise ValueError(
@@ -39,11 +56,12 @@ class StackingClassifier:
         self.meta_model = package["meta_model"]
 
     def classify(self, text: str) -> ClassifierResult:
+        prepared_text = _prepare_text(text)
         probabilities = []
         for name in self.base_models:
             model = self.models[name]
             class_index = list(model.classes_).index(1)
-            probabilities.append(float(model.predict_proba([text])[0, class_index]))
+            probabilities.append(float(model.predict_proba([prepared_text])[0, class_index]))
 
         clipped = np.clip(probabilities, 1e-4, 1 - 1e-4)
         logits = np.log(clipped / (1 - clipped)).reshape(1, -1)
