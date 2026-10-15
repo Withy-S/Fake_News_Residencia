@@ -1,0 +1,11 @@
+---
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
+hierarchy:
+  # Fica fora do git (.gitignore). Sobrescreve o common.yaml, ex.: senhas.
+  - name: "Segredos locais"
+    path: "secrets.yaml"
+  - name: "Valores padrão"
+    path: "common.yaml"

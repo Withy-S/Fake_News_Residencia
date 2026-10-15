@@ -1,0 +1,7 @@
+# Gerenciado pelo Puppet (infra/puppet).
+[Unit]
+Description=Health check da API do Fake News
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/fakenews-healthcheck
