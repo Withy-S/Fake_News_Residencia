@@ -24,7 +24,9 @@ e GBM). O treino usa a base FakeRecogna 2.0 extrativa casada por tamanho:
 ajuste. O backend normaliza o texto para minúsculas, remove o artefato `none` e
 normaliza espaços, sem truncar a notícia.
 
-O treino inclui também metade dos pares do Fake.br, para reduzir falsos positivos (notícias reais
+Antes desta mudança, no Fake.br completo (7.200 textos, sem truncar, limiar 0,5), o modelo
+treinado só na FakeRecogna tinha AUC 0,7553 e classificava 20,1% das notícias Reais como
+suspeitas. O treino inclui agora também metade dos pares do Fake.br, para reduzir falsos positivos (notícias reais
 classificadas como Fake). O backend usa três faixas: Real (p < 0,3), Incerto e Fake (p >= 0,7); só
 Fake vira "suspeito". Nos pares de teste do Fake.br o stacking obteve AUC 0,961, com 4,9% dos
 Reais como Fake e 81% dos Fake detectados. O teste não é independente (pares das mesmas fontes);
