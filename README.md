@@ -10,10 +10,27 @@ Extensão de navegador (Chrome) que ajuda o usuário a avaliar a confiabilidade 
 |---|---|
 | Back-end: estrutura base e `/health` | concluído |
 | Back-end: configuração, contrato da API e trustlist | em andamento |
-| Back-end: endpoint `/analyze` e pipeline de análise | a fazer |
-| Modelo de Machine Learning | disponível (stacking de 6 modelos, ver [ml/README.md](ml/README.md)) |
+| Back-end: endpoint `/analyze` e pipeline de análise | disponível localmente |
+| Modelo de Machine Learning | stacking retreinado integrado (5 modelos; detalhes em [ml/README.md](ml/README.md)) |
 | Análise complementar por IA (fallback) | a fazer |
 | Extensão: análise via API local | disponível para teste |
+
+## Modelo integrado
+
+O artefato `backend/models/stacking.joblib` foi atualizado com os cinco modelos
+retreinados em `challenge2v2` (baseline, SVM, Naive Bayes, n-gramas de caracteres
+e GBM). O treino usa a base FakeRecogna 2.0 extrativa casada por tamanho:
+17.648 textos no total, com 14.119 no desenvolvimento e 3.529 reservados fora do
+ajuste. O backend normaliza o texto para minúsculas, remove o artefato `none` e
+normaliza espaços, sem truncar a notícia.
+
+Na validação interna agrupada por URL, o stacking obteve AUC 0,9855. No teste
+externo Fake.br (7.200 textos, limitados às primeiras 100 palavras), sua AUC foi
+0,7388; o SVM individual chegou a 0,7681. Como a inferência da aplicação usa o
+texto completo, essa métrica externa não representa exatamente o comportamento
+com notícias longas. A queda externa indica generalização limitada para outras
+fontes. Use o resultado apenas como sinal de triagem, nunca como veredito factual
+automático.
 
 ## O que o projeto faz
 
@@ -48,9 +65,9 @@ Conteúdo sem evidência suficiente é classificado como **não verificado**, e 
 
 ```
 .
-├── backend/      API em Python (FastAPI)
+├── backend/      API em Python (FastAPI) e artefato do modelo
 ├── extension/    Extensão do navegador
-├── ml/           Treino e exportação do modelo de Machine Learning (stacking de 6 modelos)
+├── ml/           Treino e exportação do stacking de 5 modelos
 ├── docs/         Documentação e requisitos
 └── .github/      Templates de issue e de pull request
 ```
