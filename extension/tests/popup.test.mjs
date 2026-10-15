@@ -9,6 +9,7 @@ function setup() {
   const elements = new Map();
   const element = () => ({
     hidden: false, textContent: '', disabled: false, children: [], style: { setProperty() {} },
+    classList: { toggle() {}, add() {}, remove() {} },
     listeners: {}, addEventListener(event, fn) { this.listeners[event] = fn; },
     focus() {}, replaceChildren() { this.children = []; }, append(child) { this.children.push(child); },
   });
@@ -17,14 +18,14 @@ function setup() {
     return elements.get(id);
   };
   const state = {
-    calls: [], analysisCalls: [], captureError: false, newsError: false,
+    calls: [], captureError: false, newsError: false, analyzeError: false,
     result: { sources: [], unavailable_publishers: [] },
-    analysis: { status: 'ok', classification: 'suspeito', confidence: 0.91, fake_probability: 0.84, method: 'ml_model' },
+    analysis: { status: 'ok', classification: 'suspeito', confidence: 0.7, method: 'ml_model', justifications: ['Linguagem sensacionalista.'] },
   };
   const context = vm.createContext({
     document: { getElementById: get, createElement: element },
     window: { matchMedia: () => ({ matches: true }), close() {} },
-    cancelAnimationFrame() {}, requestAnimationFrame() {}, setTimeout, clearTimeout, AbortController, URL,
+    setTimeout, clearTimeout, AbortController, URL,
     captureActiveTab: async (mode) => {
       state.calls.push(mode);
       if (state.captureError) throw new Error('Selecione um trecho');
@@ -34,7 +35,10 @@ function setup() {
       if (state.newsError) throw new Error('Busca indisponível');
       return state.result;
     },
-    analyzeText: async (data) => { state.analysisCalls.push(data); return state.analysis; },
+    analyzeText: async () => {
+      if (state.analyzeError) throw new Error('Backend indisponível');
+      return state.analysis;
+    },
   });
   vm.runInContext(source.replace(/^import .*;\n/gm, ''), context);
   return { get, state, context };
@@ -48,9 +52,10 @@ test('dois modos, resultado, retorno e falha de captura', async () => {
     assert.equal(state.calls.at(-1), mode);
     assert.equal(get('result-screen').hidden, false);
     assert.equal(get('home-screen').hidden, true);
-    assert.equal(state.analysisCalls.at(-1).analysis_type, mode);
-    assert.equal(get('fake-percent').textContent, '84%');
-    assert.match(get('analysis-status').textContent, /Classificação: Suspeito/);
+    assert.equal(get('fake-percent').textContent, '70%');
+    assert.equal(get('result-title').textContent, 'Conteúdo possivelmente suspeito');
+    assert.equal(get('verdict-tag').textContent, 'MODELO DE ML');
+    assert.equal(get('verdict-detail').textContent, 'Linguagem sensacionalista.');
     assert.equal(get('page-title').textContent, '<Título>');
     get('back').listeners.click();
     assert.equal(get('result-screen').hidden, true);
@@ -59,6 +64,25 @@ test('dois modos, resultado, retorno e falha de captura', async () => {
   await get('read-selection').listeners.click();
   assert.equal(get('status').textContent, 'Selecione um trecho');
   assert.equal(get('result-screen').hidden, true);
+});
+
+test('análise indisponível não impede de ver as fontes relacionadas', async () => {
+  const { get, state } = setup();
+  state.analyzeError = true;
+  await get('read-page').listeners.click();
+  assert.equal(get('result-screen').hidden, false);
+  assert.equal(get('result-title').textContent, 'Análise indisponível');
+  assert.equal(get('verdict-detail').textContent, 'Backend indisponível');
+  assert.equal(get('verdict-tag').hidden, true);
+});
+
+test('classificação confiável mostra baixa chance de fake, em tom seguro', async () => {
+  const { get, state } = setup();
+  state.analysis = { status: 'ok', classification: 'confiavel', confidence: 0.9, method: 'whitelist', justifications: [] };
+  await get('read-page').listeners.click();
+  assert.equal(get('fake-percent').textContent, '10%');
+  assert.equal(get('verdict-tag').textContent, 'FONTE CONFIÁVEL');
+  assert.equal(get('verdict-detail').textContent, 'Confiança do modelo: 90%.');
 });
 
 test('só cria botões de matérias retornadas e permite resultado vazio', async () => {

@@ -11,7 +11,7 @@ Extensão de navegador (Chrome) que ajuda o usuário a avaliar a confiabilidade 
 | Back-end: estrutura base e `/health` | concluído |
 | Back-end: configuração, contrato da API e trustlist | em andamento |
 | Back-end: endpoint `/analyze` e pipeline de análise | disponível localmente |
-| Modelo de Machine Learning | stacking retreinado integrado localmente |
+| Modelo de Machine Learning | stacking retreinado integrado (5 modelos; detalhes em [ml/README.md](ml/README.md)) |
 | Análise complementar por IA (fallback) | a fazer |
 | Extensão: análise via API local | disponível para teste |
 
@@ -67,6 +67,7 @@ Conteúdo sem evidência suficiente é classificado como **não verificado**, e 
 .
 ├── backend/      API em Python (FastAPI) e artefato do modelo
 ├── extension/    Extensão do navegador
+├── ml/           Treino e exportação do stacking de 5 modelos
 ├── docs/         Documentação e requisitos
 └── .github/      Templates de issue e de pull request
 ```
