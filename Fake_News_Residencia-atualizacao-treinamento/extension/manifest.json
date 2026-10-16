@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Anti Fake News",
+  "version": "2.3.0",
+  "description": "Apoia a avaliação de notícias e encontra outras coberturas em fontes confiáveis.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "icons": {
+    "16": "icon/icon_fakenils.jpg",
+    "32": "icon/icon_fakenils.jpg",
+    "48": "icon/icon_fakenils.jpg",
+    "128": "icon/icon_fakenils.jpg"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_icon": {
+    "16": "icon/icon_fakenils.jpg",
+    "32": "icon/icon_fakenils.jpg",
+    "48": "icon/icon_fakenils.jpg",
+    "128": "icon/icon_fakenils.jpg"
+  },
+    "default_popup": "popup/popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "host_permissions": [
+    "https://news.google.com/*",
+    "https://8bjadf63m7.execute-api.sa-east-1.amazonaws.com/*"
+  ]
+}

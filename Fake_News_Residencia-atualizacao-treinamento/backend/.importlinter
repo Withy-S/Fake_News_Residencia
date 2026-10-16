@@ -1,0 +1,30 @@
+[importlinter]
+root_package = app
+include_external_packages = True
+
+[importlinter:contract:camadas]
+name = Regra de dependência entre camadas
+type = layers
+layers =
+    app.main
+    app.api
+    app.schemas
+    app.bootstrap
+    app.application | app.adapters
+    app.domain
+
+[importlinter:contract:dominio-puro]
+name = O domínio não conhece frameworks nem outras camadas
+type = forbidden
+source_modules =
+    app.domain
+forbidden_modules =
+    app.api
+    app.schemas
+    app.application
+    app.adapters
+    app.bootstrap
+    app.core
+    fastapi
+    pydantic
+    starlette
