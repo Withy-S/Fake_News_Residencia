@@ -1,0 +1,10 @@
+# Gerenciado pelo Puppet (infra/puppet).
+[Unit]
+Description=Limpa imagens e cache de build do Docker sem uso
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+# Sem --volumes: os dados do Grafana e do Prometheus ficam.
+ExecStart=/usr/bin/docker system prune -af --filter until=168h
