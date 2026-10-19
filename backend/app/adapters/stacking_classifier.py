@@ -58,7 +58,7 @@ class StackingClassifier:
         classification = (
             Classification.SUSPICIOUS
             if fake_probability >= 0.5
-            else Classification.TRUSTED
+            else Classification.UNVERIFIED
         )
         return ClassifierResult(
             classification=classification,
